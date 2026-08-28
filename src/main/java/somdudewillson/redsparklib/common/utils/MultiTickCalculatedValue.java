@@ -56,8 +56,11 @@ public class MultiTickCalculatedValue<C,S,V> implements Tickable {
 	}
 
 	public void setStateInitContext(@Nullable C stateInitContext, BiPredicate<C,C> equalityTest, boolean invalidateCurrentValue) {
+		if (equalityTest.test(this.stateInitContext, stateInitContext)) {
+			this.stateInitContext = stateInitContext;
+			return;
+		}
 		this.stateInitContext = stateInitContext;
-		if (equalityTest.test(this.stateInitContext, stateInitContext)) { return; }
 		
 		if (invalidateCurrentValue) {
 			latestState = null;

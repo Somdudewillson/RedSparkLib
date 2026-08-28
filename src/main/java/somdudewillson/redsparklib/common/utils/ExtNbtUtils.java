@@ -13,6 +13,9 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multiset;
+
 import lombok.val;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder.Reference;
@@ -152,6 +155,41 @@ public class ExtNbtUtils {
 		return set;
 	}
 	
+	// Multiset Serialization
+	public static <K extends Tag> ListTag serializeTagMultiset(Multiset<K> multiset) {
+		return serializeMultiset(multiset, Function.identity());
+	}
+	public static <K extends INBTSerializable<? extends Tag>> ListTag serializeMultiset(Multiset<K> multiset) {
+		return serializeMultiset(multiset, K::serializeNBT);
+	}
+	public static <K, V extends Tag> ListTag serializeMultiset(Multiset<K> multiset, Function<K, V> valueSerializer) {
+		return serializeStream(multiset.entrySet().stream(), entry -> {
+			CompoundTag entryTag = new CompoundTag();
+			entryTag.put("e", valueSerializer.apply(entry.getElement()));
+			entryTag.put("c", IntTag.valueOf(entry.getCount()));
+			return entryTag;
+		});
+	}
+	public static <KN extends Tag,K extends INBTSerializable<KN>,SN extends Multiset<K>> SN deserializeIntoMultiset(
+			ListTag nbt, SN multiset, Supplier<K> valueFactory) {
+		return deserializeIntoMultiset(nbt, multiset, valueFactory, K::deserializeNBT);
+	}
+	public static <KN extends Tag,K,SN extends Multiset<K>> SN deserializeIntoMultiset(ListTag nbt, SN multiset, 
+			Supplier<K> valueFactory, BiConsumer<K, KN> valueDeserializer) {
+		return deserializeIntoMultiset(nbt, multiset, makeInlineNbtDeserializer(valueFactory, valueDeserializer));
+	}
+	@SuppressWarnings("unchecked")
+	public static <KN extends Tag,K,SN extends Multiset<K>> SN deserializeIntoMultiset(ListTag nbt, SN multiset, 
+			Function<KN, K> valueDeserializer) {
+		deserializeToStream(nbt, e -> (CompoundTag) e)
+			.forEachOrdered(e -> {
+				K element = valueDeserializer.apply((KN) e.get("e"));
+				int count = ((NumericTag) e.get("c")).getAsInt();
+				multiset.add(element, count);
+			});
+		return multiset;
+	}
+	
 	// Map Serialization
 	public static <K extends INBTSerializable<? extends Tag>, V extends INBTSerializable<? extends Tag>> ListTag serializeMap(Map<K,V> map) {
 		return ExtNbtUtils.serializeMap(map, K::serializeNBT, V::serializeNBT);
@@ -201,6 +239,61 @@ public class ExtNbtUtils {
 	public static <KN extends Tag,VN extends Tag,K extends INBTSerializable<KN>,V extends INBTSerializable<VN>,MN extends Map<K,V>> MN deserializeIntoMap(ListTag nbt, MN map, 
 			Supplier<K> keyFactory, Supplier<V> valueFactory) {
 		return deserializeIntoMap(nbt, map, K::deserializeNBT, V::deserializeNBT, keyFactory, valueFactory);
+	}
+	
+	// Multimap Serialization
+	public static <K extends INBTSerializable<? extends Tag>, V extends INBTSerializable<? extends Tag>> ListTag serializeMultimap(Multimap<K,V> map) {
+		return ExtNbtUtils.serializeMultimap(map, K::serializeNBT, V::serializeNBT);
+	}
+	public static <K, V> ListTag serializeMultimap(Multimap<K,V> map, 
+			Function<K, ? extends Tag> keySerializer, Function<V,? extends Tag> valueSerializer) {
+		return serializeStream(map.asMap().entrySet().stream(), e -> {
+			CompoundTag entryTag = new CompoundTag();
+			
+			entryTag.put("k", keySerializer.apply(e.getKey()));
+			
+			ListTag listTag = new ListTag();
+			e.getValue().forEach(v -> listTag.add(valueSerializer.apply(v)));
+			entryTag.put("v", listTag);
+			
+			return entryTag;
+		});
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <KN extends Tag,VN extends Tag,K,V,MN extends Multimap<K,V>> MN deserializeIntoMultimap(ListTag nbt, MN map, 
+			Function<KN, K> keyDeserializer, Function<VN, V> valueDeserializer) {
+		deserializeToStream(nbt, e->(CompoundTag)e)
+			.forEachOrdered(e -> {
+				K key = keyDeserializer.apply((KN) e.get("k"));
+				ListTag valuesTag = (ListTag) e.get("v");
+				valuesTag.forEach(t -> {
+					map.put(key, valueDeserializer.apply((VN) t));
+				});
+			});
+		
+		return map;
+	}
+	
+	public static <KN extends Tag,VN extends Tag,K,V,MN extends Multimap<K,V>> MN deserializeIntoMultimap(ListTag nbt, MN map, 
+			BiConsumer<K, KN> keyDeserializer, BiConsumer<V, VN> valueDeserializer, 
+			Supplier<K> keyFactory, Supplier<V> valueFactory) {
+		return deserializeIntoMultimap(nbt, map, makeInlineNbtDeserializer(keyFactory, keyDeserializer), makeInlineNbtDeserializer(valueFactory, valueDeserializer));
+	}
+	public static <KN extends Tag,VN extends Tag,K,V,MN extends Multimap<K,V>> MN deserializeIntoMultimap(ListTag nbt, MN map, 
+			Function<KN, K> keyDeserializer, BiConsumer<V, VN> valueDeserializer, 
+			Supplier<V> valueFactory) {
+		return deserializeIntoMultimap(nbt, map, keyDeserializer, makeInlineNbtDeserializer(valueFactory, valueDeserializer));
+	}
+	public static <KN extends Tag,VN extends Tag,K,V,MN extends Multimap<K,V>> MN deserializeIntoMultimap(ListTag nbt, MN map, 
+			BiConsumer<K, KN> keyDeserializer, Function<VN, V> valueDeserializer, 
+			Supplier<K> keyFactory) {
+		return deserializeIntoMultimap(nbt, map, makeInlineNbtDeserializer(keyFactory, keyDeserializer), valueDeserializer);
+	}
+	
+	public static <KN extends Tag,VN extends Tag,K extends INBTSerializable<KN>,V extends INBTSerializable<VN>,MN extends Multimap<K,V>> MN deserializeIntoMultimap(ListTag nbt, MN map, 
+			Supplier<K> keyFactory, Supplier<V> valueFactory) {
+		return deserializeIntoMultimap(nbt, map, K::deserializeNBT, V::deserializeNBT, keyFactory, valueFactory);
 	}
 	
 	// Enum Serialization
@@ -265,7 +358,7 @@ public class ExtNbtUtils {
 	public static <T, R extends Registry<T>> Optional<Tag> trySerializeVanillaRegistryValue(T registeredValue, ResourceKey<R> registryKey) {
 		val registry = VanillaRegistries.createLookup().lookupOrThrow(registryKey);
 		val valueKey = registry.listElementIds()
-				.filter( k->registry.get(k).map(v->v.equals(registeredValue)).orElse(false) )
+				.filter( k->registry.get(k).map(v->v.get().equals(registeredValue)).orElse(false) )
 				.findAny();
 		
 		return valueKey.map(k->serializeResourceKey(registryKey, k));

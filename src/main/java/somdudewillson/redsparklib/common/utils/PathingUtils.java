@@ -54,7 +54,7 @@ public class PathingUtils {
 	public static <T> T visitPathNodes(Path path, BiFunction<T, Node, T> visitor, @Nullable T initialValue) {
 		T value = initialValue;
 		for (int i=0;i<path.getNodeCount();i++) {
-			visitor.apply(value, path.getNode(i));
+			value = visitor.apply(value, path.getNode(i));
 		}
 
 		return value;
@@ -68,7 +68,7 @@ public class PathingUtils {
 		for (int i=0;i<path.getNodeCount();i++) {
 			val curNode = path.getNode(i);
 			if (i!=0 || !skipFirst) {
-				visitor.apply(value, prevNode, curNode);
+				value = visitor.apply(value, prevNode, curNode);
 			}
 			prevNode = curNode;
 		}

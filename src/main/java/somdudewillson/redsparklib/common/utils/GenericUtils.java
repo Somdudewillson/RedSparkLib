@@ -131,7 +131,9 @@ public class GenericUtils {
 	
 	public static double calculateHealthFromPotionEffect(MobEffectInstance effectInstance) {
 		int ticksPerTrigger;
-		switch (effectInstance.getEffect().getDescriptionId()) {
+		String descId = effectInstance.getEffect().getDescriptionId();
+		String effectKey = descId.substring(descId.lastIndexOf('.') + 1);
+		switch (effectKey) {
 		case "instant_damage":
 			return -1*3*Math.pow(2,effectInstance.getAmplifier())*effectInstance.getDuration();
 		case "instant_health":

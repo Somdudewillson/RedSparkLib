@@ -154,7 +154,7 @@ public class OptNbtUtils {
 		return tag.contains(pKey, Tag.TAG_ANY_NUMERIC) ? Optional.of(tag.getByte(pKey)) : Optional.empty();
 	}
 
-	public Optional<Short> getShort(CompoundTag tag, String pKey) {
+	public static Optional<Short> getShort(CompoundTag tag, String pKey) {
 		return tag.contains(pKey, Tag.TAG_ANY_NUMERIC) ? Optional.of(tag.getShort(pKey)) : Optional.empty();
 	}
 

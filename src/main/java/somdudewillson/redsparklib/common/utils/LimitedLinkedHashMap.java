@@ -128,7 +128,7 @@ public class LimitedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
         if (maxCapacity < 1) {
         	throw new IllegalArgumentException("Max capacity must be > 0!");
         }
-        if (maxCapacity < 16) {
+        if (maxCapacity < initialCapacity) {
         	throw new IllegalArgumentException("Max capacity must be >= initial capacity!");
         }
         this.maxCapacity = maxCapacity;

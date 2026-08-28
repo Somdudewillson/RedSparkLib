@@ -18,4 +18,8 @@ public class ResourceLocationUtils {
 	public ResourceLocation modEntityTex(String path) {
 		return modTex("entity/"+path);
 	}
+	
+	public static ResourceLocation mcPath(String path) {
+		return ResourceLocation.fromNamespaceAndPath(ResourceLocation.DEFAULT_NAMESPACE, path);
+	}
 }
