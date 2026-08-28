@@ -34,7 +34,7 @@ public class RedSparkLibItemTagProvider extends ItemTagsProvider {
 		LOGGER.debug("Generating simple item tags for {}...", manager.getModid());
 		List<SimpleDatagenTask<Object, RedSparkLibItemTagProvider>> datagenTasks = manager.getFilteredDatagenTasks(RedSparkLibItemTagProvider.class);
 		for (SimpleDatagenTask<?, RedSparkLibItemTagProvider> genTask : datagenTasks) {
-			genTask.buildData(this);
+			genTask.buildData(this, LOGGER);
 		}
 		LOGGER.debug("Generated {} simple item tags for {}.", datagenTasks.size(), manager.getModid());
 		manager.markDatagenRun();

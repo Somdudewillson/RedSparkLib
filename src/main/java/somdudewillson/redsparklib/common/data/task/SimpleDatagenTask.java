@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import net.minecraftforge.registries.RegistryObject;
+import org.slf4j.Logger;
 
 @RequiredArgsConstructor
 public abstract class SimpleDatagenTask<T, P> {
@@ -17,13 +18,16 @@ public abstract class SimpleDatagenTask<T, P> {
 		ITEM_MODEL,
 		BLOCK_MODEL,
 		ITEM_TAGS,
-		BLOCK_TAG,
+		BLOCK_TAGS,
 		BLOCK_LOOT;
 	}
 	@Getter
 	protected final RegistryObject<T> targetRegistry;
 	
-	public abstract <L extends P> void buildData(L dataProvider);
+	public <L extends P> void buildData(L dataProvider, Logger logger) {
+		buildData(dataProvider);
+	}
+	protected abstract <L extends P> void buildData(L dataProvider);
 	
 	public abstract DatagenTaskType getTaskType();
 	public abstract Class<P> getDataProviderClass();

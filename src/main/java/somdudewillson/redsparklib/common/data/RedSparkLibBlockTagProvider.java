@@ -31,7 +31,7 @@ public class RedSparkLibBlockTagProvider extends BlockTagsProvider {
 		LOGGER.debug("Generating simple block tags for {}...", manager.getModid());
 		List<SimpleDatagenTask<Object, RedSparkLibBlockTagProvider>> datagenTasks = manager.getFilteredDatagenTasks(RedSparkLibBlockTagProvider.class);
 		for (SimpleDatagenTask<?, RedSparkLibBlockTagProvider> genTask : datagenTasks) {
-			genTask.buildData(this);
+			genTask.buildData(this, LOGGER);
 		}
 		LOGGER.debug("Generated {} simple block tags for {}.", datagenTasks.size(), manager.getModid());
 		manager.markDatagenRun();

@@ -26,7 +26,7 @@ public class RedSparkLibBlockLootTableProvider extends BlockLootSubProvider {
 		LOGGER.debug("Generating simple block loot tables for {}...", manager.getModid());
 		List<SimpleDatagenTask<Object, RedSparkLibBlockLootTableProvider>> datagenTasks = manager.getFilteredDatagenTasks(RedSparkLibBlockLootTableProvider.class);
 		for (SimpleDatagenTask<?, RedSparkLibBlockLootTableProvider> genTask : datagenTasks) {
-			genTask.buildData(this);
+			genTask.buildData(this, LOGGER);
 		}
 		LOGGER.debug("Generated {} simple block loot tables for {}.", datagenTasks.size(), manager.getModid());
 		manager.markDatagenRun();

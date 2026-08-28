@@ -27,7 +27,7 @@ public class RedSparkLibBlockStateProvider extends BlockStateProvider {
 		LOGGER.debug("Generating simple block states & models for {}...", manager.getModid());
 		List<SimpleDatagenTask<Object, RedSparkLibBlockStateProvider>> datagenTasks = manager.getFilteredDatagenTasks(RedSparkLibBlockStateProvider.class);
 		for (SimpleDatagenTask<?, RedSparkLibBlockStateProvider> genTask : datagenTasks) {
-			genTask.buildData(this);
+			genTask.buildData(this, LOGGER);
 		}
 		LOGGER.debug("Generated {} simple block states & models for {}.", datagenTasks.size(), manager.getModid());
 		manager.markDatagenRun();
