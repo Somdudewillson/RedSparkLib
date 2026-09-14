@@ -1,0 +1,48 @@
+loomx.loom_version="1.16-SNAPSHOT"
+
+
+mod.id = "redsparklib"
+mod.name = "RedSparkLib"
+mod.group = "com.github.somdudewillson"
+mod.version = "1.1.0"
+mod.channel_tag = ""
+mod.description = "A helpful library mod for my mods."
+mod.authors = ["Somdudewillson"]
+mod.contributors = []
+mod.inception_year = "2026"
+mod.license.name = "MIT"
+mod.license.url = "https://opensource.org/licenses/MIT"
+mod.license.dist = "repo"
+mod.sources_url = "https://github.com/rotgruengelb/stonecutter-mod-template"
+mod.homepage_url = "https://github.com/rotgruengelb/stonecutter-mod-template"
+mod.issues_url = "https://github.com/rotgruengelb/stonecutter-mod-template/issues"
+mod.discord_url = ""
+mod.environment = "client_and_server"
+
+[[mod.pom.developers]]
+id = "somdudewillson"
+name = "Somdudewillson"
+url = "https://github.com/ghost"
+
+[fabric]
+deps.fabric-loader = "0.16.10"
+
+[fabric."1.20.1"]
+deps.minecraft = "1.20.1"
+deps.fabric-loader = "0.16.10"
+deps.fabric-api = "0.92.2+1.20.1"
+deps.modmenu = "7.2.2"
+
+[forge]
+
+[forge."1.20.1"]
+deps.minecraft = "1.20.1"
+deps.forge = "47.3.0"
+
+[neoforge]
+
+[neoforge."1.21.1"]
+deps.minecraft = "1.21.1"
+deps.neoforge = "21.1.219"
+
+

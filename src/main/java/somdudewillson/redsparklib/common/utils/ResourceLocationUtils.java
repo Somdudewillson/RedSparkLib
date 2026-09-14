@@ -8,7 +8,7 @@ public class ResourceLocationUtils {
 	private final String modId;
 	
 	public ResourceLocation modPath(String path) {
-		return ResourceLocation.fromNamespaceAndPath(modId, path);
+		return new ResourceLocation(modId, path);
 	}
 	
 	public ResourceLocation modTex(String path) {
@@ -20,6 +20,6 @@ public class ResourceLocationUtils {
 	}
 	
 	public static ResourceLocation mcPath(String path) {
-		return ResourceLocation.fromNamespaceAndPath(ResourceLocation.DEFAULT_NAMESPACE, path);
+		return new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, path);
 	}
 }

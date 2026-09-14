@@ -130,7 +130,7 @@ public class MobEffectDataHolderImpl implements IMobEffectDataHolder {
 			for (int i=0; i<tag.size(); i++) {
 				val entryTag = tag.getCompound(i);
 				
-				val entryPotionId = ResourceLocation.parse(entryTag.getString(POTION_ID_KEY));
+				val entryPotionId = new ResourceLocation(entryTag.getString(POTION_ID_KEY));
 				val entryData = entryTag.getCompound(POTION_DATA_KEY);
 				
 				potionDataMap.put(entryPotionId, entryData);
