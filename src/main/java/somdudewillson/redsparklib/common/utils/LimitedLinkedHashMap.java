@@ -17,10 +17,10 @@ public class LimitedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
      * with the specified initial capacity, max capacity, and load factor.
      *
      * @param  initialCapacity the initial capacity
-     * @param  initialCapacity the max capacity
+     * @param  maxCapacity     the max capacity
      * @param  loadFactor      the load factor
      * @throws IllegalArgumentException if the initial capacity is negative
-     *         or the max capacity is nonpositive or max capacity < initial capacity
+     *         or the max capacity is nonpositive or max capacity &lt; initial capacity
      *         or the load factor is nonpositive
      */
     public LimitedLinkedHashMap(int initialCapacity, int maxCapacity, float loadFactor) {
@@ -39,9 +39,9 @@ public class LimitedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
      * with the specified initial capacity and max capacity, and a default load factor (0.75).
      *
      * @param  initialCapacity the initial capacity
-     * @param  initialCapacity the max capacity
+     * @param  maxCapacity the max capacity
      * @throws IllegalArgumentException if the initial capacity is negative
-     *         or the max capacity is nonpositive or max capacity < initial capacity
+     *         or the max capacity is nonpositive or max capacity &lt; initial capacity
      */
     public LimitedLinkedHashMap(int initialCapacity, int maxCapacity) {
         super(initialCapacity);
@@ -58,7 +58,7 @@ public class LimitedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
      * Constructs an empty insertion-ordered {@code LimitedLinkedHashMap} instance
      * with the specified max capacity, an initial capacity sufficient to fit the max capacity, and the default load factor (0.75).
      * 
-     * @param  initialCapacity the max capacity
+     * @param  maxCapacity the max capacity
      * @throws IllegalArgumentException if the max capacity is nonpositive
      */
     public LimitedLinkedHashMap(int maxCapacity) {
@@ -92,9 +92,9 @@ public class LimitedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
      * and the specified max capacity.
      *
      * @param  m the map whose mappings are to be placed in this map
-     * @param  initialCapacity the max capacity
+     * @param  maxCapacity the max capacity
      * @throws NullPointerException if the specified map is null
-     * @throws IllegalArgumentException if the max capacity is nonpositive or max capacity < source map size
+     * @throws IllegalArgumentException if the max capacity is nonpositive or max capacity &lt; source map size
      */
     public LimitedLinkedHashMap(Map<? extends K, ? extends V> m, int maxCapacity) {
         super(m);
@@ -112,12 +112,12 @@ public class LimitedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
      * specified initial capacity, load factor and ordering mode.
      *
      * @param  initialCapacity the initial capacity
-     * @param  initialCapacity the max capacity
+     * @param  maxCapacity     the max capacity
      * @param  loadFactor      the load factor
      * @param  accessOrder     the ordering mode - {@code true} for
      *         access-order, {@code false} for insertion-order
      * @throws IllegalArgumentException if the initial capacity is negative
-     *         or the max capacity is nonpositive or max capacity < initial capacity
+     *         or the max capacity is nonpositive or max capacity &lt; initial capacity
      *         or the load factor is nonpositive
      */
     public LimitedLinkedHashMap(int initialCapacity, 
