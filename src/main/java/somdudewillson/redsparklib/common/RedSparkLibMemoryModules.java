@@ -13,15 +13,13 @@ import somdudewillson.redsparklib.RedSparkLib;
 import somdudewillson.redsparklib.world.entity.ai.memory.RecordedEntityInfoMap;
 
 public class RedSparkLibMemoryModules {
-	public static final RegistryObject<MemoryModuleType<Player>> NEAREST_PLAYER_GLOBAL = registerMemoryModule("nearest_player_global");
-	public static final RegistryObject<MemoryModuleType<RecordedEntityInfoMap>> RECORDED_ENTITY_INFO = registerMemoryModule("recorded_entity_info", RecordedEntityInfoMap.CODEC);
+	public static final RegistryObject</*? neoforge {*//*MemoryModuleType<?>, *//*?}*/MemoryModuleType<Player>> NEAREST_PLAYER_GLOBAL = registerMemoryModule("nearest_player_global");
+	public static final RegistryObject</*? neoforge {*//*MemoryModuleType<?>, *//*?}*/MemoryModuleType<RecordedEntityInfoMap>> RECORDED_ENTITY_INFO = registerMemoryModule("recorded_entity_info", RecordedEntityInfoMap.CODEC);
     
-    private static <T extends MemoryModuleType<U>, U> RegistryObject<T> registerMemoryModule(String registryName, @Nullable Codec<U> pCodec) {
-    	@SuppressWarnings("unchecked")
-		RegistryObject<T> memoryTypeRegistry = (RegistryObject<T>) RedSparkLib.MEMORY_MODULE_TYPES.register(registryName, ()->new MemoryModuleType<U>(Optional.ofNullable(pCodec)));
-    	return memoryTypeRegistry;
+    private static <U> RegistryObject</*? neoforge {*//*MemoryModuleType<?>, *//*?}*/MemoryModuleType<U>> registerMemoryModule(String registryName, @Nullable Codec<U> pCodec) {
+    	return RedSparkLib.MEMORY_MODULE_TYPES.register(registryName, ()->new MemoryModuleType<U>(Optional.ofNullable(pCodec)));
     }
-    private static <T extends MemoryModuleType<U>, U> RegistryObject<T> registerMemoryModule(String registryName) {
+    private static <U> RegistryObject</*? neoforge {*//*MemoryModuleType<?>, *//*?}*/MemoryModuleType<U>> registerMemoryModule(String registryName) {
     	return registerMemoryModule(registryName, null);
     }
 }

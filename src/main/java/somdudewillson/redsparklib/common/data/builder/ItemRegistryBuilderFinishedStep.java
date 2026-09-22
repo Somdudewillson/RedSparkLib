@@ -6,6 +6,6 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.RegistryObject;
 
 public interface ItemRegistryBuilderFinishedStep<T extends Item, R> {
-	public ItemRegistryBuilderFinishedStep<T,R> inCreativeTab(Consumer<RegistryObject<? extends Item>> tabRegistrar);
+	public ItemRegistryBuilderFinishedStep<T,R> inCreativeTab(Consumer<RegistryObject</*? neoforge {*//*Item, *//*?}*/? extends Item>> tabRegistrar);
 	public R build();
 }

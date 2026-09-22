@@ -14,12 +14,12 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.INBTSerializable;
 import somdudewillson.redsparklib.common.utils.ExtNbtUtils;
-import somdudewillson.redsparklib.serialization.codecs.NbtSerializableCodec;
+import somdudewillson.redsparklib.common.utils.IContextFreeNBTSerializable;
+import somdudewillson.redsparklib.serialization.codecs.NbtContextFreeSerializableCodec;
 
-public class RecordedEntityInfoMap implements INBTSerializable<ListTag> {
-	public static final Codec<RecordedEntityInfoMap> CODEC = NbtSerializableCodec.list(RecordedEntityInfoMap.class, RecordedEntityInfoMap::new);
+public class RecordedEntityInfoMap implements IContextFreeNBTSerializable<ListTag> {
+	public static final Codec<RecordedEntityInfoMap> CODEC = NbtContextFreeSerializableCodec.list(RecordedEntityInfoMap.class, RecordedEntityInfoMap::new);
 	
 	private final Object2ObjectOpenHashMap<UUID, RecordedEntityInfo> internalDataMap = new Object2ObjectOpenHashMap<>();
 
@@ -83,16 +83,27 @@ public class RecordedEntityInfoMap implements INBTSerializable<ListTag> {
 
 	@Override
 	public ListTag serializeNBT() {
+		//? neoforge {
+		/*return ExtNbtUtils.serializeMap(internalDataMap, NbtUtils::createUUID, ExtNbtUtils.makeInlineStubbedNbtSerializer(provider));
+		*///?} forge {
 		return ExtNbtUtils.serializeMap(internalDataMap, NbtUtils::createUUID, RecordedEntityInfo::serializeNBT);
+		//?}
 	}
 
 	@Override
 	public void deserializeNBT(ListTag nbt) {
 		internalDataMap.clear();
+		//? neoforge {
+		/*ExtNbtUtils.deserializeIntoMap(
+				nbt, internalDataMap, 
+				NbtUtils::loadUUID, 
+				ExtNbtUtils.makeInlineStubbedNbtDeserializer(provider, RecordedEntityInfo::new));
+		*///?} forge {
 		ExtNbtUtils.deserializeIntoMap(
 				nbt, internalDataMap, 
 				NbtUtils::loadUUID, 
 				RecordedEntityInfo::deserializeNBT, 
 				RecordedEntityInfo::new);
+		//?}
 	}
 }

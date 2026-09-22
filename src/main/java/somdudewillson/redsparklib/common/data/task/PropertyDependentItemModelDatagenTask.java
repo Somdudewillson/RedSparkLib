@@ -20,15 +20,25 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class PropertyDependentItemModelDatagenTask<R extends Item> extends ItemModelDatagenTask<R> {
 	private final OverridePredicateData[] predicates;
+	//? neoforge {
+	/*private final RegistryObject<Item, R> typedRegistry;
+	*///?}
 
-	public PropertyDependentItemModelDatagenTask(RegistryObject<R> targetRegistry, OverridePredicateData[] predicates) {
+	public PropertyDependentItemModelDatagenTask(RegistryObject</*? neoforge {*//*Item, *//*?}*/R> targetRegistry, OverridePredicateData[] predicates) {
 		super(targetRegistry);
+		//? neoforge {
+		/*this.typedRegistry = targetRegistry;
+		*///?}
 		this.predicates = predicates;
 	}
 
 	@Override
 	public void buildData(ItemModelProvider provider, Logger logger) {
+		//? neoforge {
+		/*val itemResourceLocation = typedRegistry.getId();
+		*///?} forge {
 		val itemResourceLocation = targetRegistry.getId();
+		//?}
 		logger.debug("Generating property-dependent item model for {}...", itemResourceLocation);
 		Map<ResourceLocation, List<OverridePredicateData>> keyValuesMap = Arrays.stream(predicates)
 				.collect(Collectors.toUnmodifiableMap(

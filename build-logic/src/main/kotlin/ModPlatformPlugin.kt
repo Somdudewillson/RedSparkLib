@@ -173,7 +173,7 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 		val javaVersionValue = "JAVA_${ctx.javaVersion.majorVersion}"
 		val excluded = ctx.loader.excludedResources
 		tasks.named<ProcessResources>("processResources") {
-			dependsOn(tasks.named("stonecutterGenerate"), "kspKotlin")
+			dependsOn(tasks.named("stonecutterGenerate"))
 			filesMatching("*.mixins.json") {
 				expand("java" to javaVersionValue)
 			}
@@ -203,7 +203,6 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 
 	private fun Project.configureFletchingTable(ctx: Context) {
 		extensions.configure<FletchingTableExtension> {
-			mixins.create("main") { mixin("default", "${ctx.modId}.mixins.json") }
 			j52j.register("main") { extension("json", "**/*.json5") }
 		}
 	}

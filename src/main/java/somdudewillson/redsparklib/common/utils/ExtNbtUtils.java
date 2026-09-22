@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -18,6 +17,11 @@ import com.google.common.collect.Multiset;
 
 import lombok.val;
 import net.minecraft.core.BlockPos;
+//? neoforge {
+/*import net.minecraft.core.HolderLookup;
+*///?} forge {
+import net.minecraftforge.registries.IForgeRegistry;
+//?}
 import net.minecraft.core.Holder.Reference;
 import net.minecraft.core.Registry;
 import net.minecraft.data.registries.VanillaRegistries;
@@ -34,7 +38,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ExtNbtUtils {
@@ -82,10 +85,14 @@ public class ExtNbtUtils {
 	
 	// Stream Serialization
 	public static <K extends Tag> ListTag serializeTagStream(Stream<K> stream) {
-		return ExtNbtUtils.serializeStream(stream, Function.identity());
+		return serializeStream(stream, Function.identity());
 	}
-	public static <K extends INBTSerializable<? extends Tag>> ListTag serializeStream(Stream<K> stream) {
-		return ExtNbtUtils.serializeStream(stream, K::serializeNBT);
+	public static <T extends Tag, K extends INBTSerializable<T>> ListTag serializeStream(Stream<K> stream/*? neoforge {*//*, HolderLookup.Provider provider*//*?}*/) {
+		//? neoforge {
+		/*return serializeStream(stream, makeInlineStubbedNbtSerializer(provider));
+		*///?} forge {
+		return serializeStream(stream, K::serializeNBT);
+		//?}
 	}
 	public static <K, V extends Tag> ListTag serializeStream(Stream<K> stream, Function<K, V> valueSerializer) {
 		ListTag listTag = new ListTag();
@@ -93,12 +100,19 @@ public class ExtNbtUtils {
 	
 		return listTag;
 	}
-	public static <KN extends Tag,K> Stream<K> deserializeToStream(ListTag nbt, 
-			Supplier<K> valueFactory, BiConsumer<K, KN> valueDeserializer) {
+	public static <KN extends Tag,K> Stream<K> deserializeToStream(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, 
+			Supplier<K> valueFactory, TagDeserializerFunction<K, KN> valueDeserializer) {
+		//? neoforge {
+		/*return deserializeToStream(nbt, makeInlineStubbedNbtDeserializer(provider, valueFactory, valueDeserializer));
+		*///?} forge {
 		return deserializeToStream(nbt, makeInlineNbtDeserializer(valueFactory, valueDeserializer));
+		//?}
 	}
 	@SuppressWarnings("unchecked")
-	public static <KN extends Tag,K> Stream<K> deserializeToStream(ListTag nbt, 
+	public static <KN extends Tag,K> Stream<K> deserializeToStream(
+			ListTag nbt, 
 			Function<KN, K> valueDeserializer) {
 		return nbt.stream()
 				.map(t->(KN)t)
@@ -109,19 +123,31 @@ public class ExtNbtUtils {
 	public static <K extends Tag> ListTag serializeTagList(List<K> list) {
 		return serializeList(list, Function.identity());
 	}
-	public static <K extends INBTSerializable<? extends Tag>> ListTag serializeList(List<K> list) {
+	public static <T extends Tag, K extends INBTSerializable<T>> ListTag serializeList(List<K> list/*? neoforge {*//*, HolderLookup.Provider provider*//*?}*/) {
+		//? neoforge {
+		/*return serializeList(list, makeInlineStubbedNbtSerializer(provider));
+		*///?} forge {
 		return serializeList(list, K::serializeNBT);
+		//?}
 	}
 	public static <K, V extends Tag> ListTag serializeList(List<K> list, Function<K, V> valueSerializer) {
 		return serializeStream(list.stream(), valueSerializer);
 	}
 	public static <KN extends Tag,K extends INBTSerializable<KN>,LN extends List<K>> LN deserializeIntoList(
-			ListTag nbt, LN list, Supplier<K> valueFactory) {
-		return deserializeIntoList(nbt, list, valueFactory, K::deserializeNBT);
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, LN list, 
+			Supplier<K> valueFactory) {
+		return deserializeIntoList(/*? neoforge {*//*provider, *//*?}*/nbt, list, valueFactory, K::deserializeNBT);
 	}
-	public static <KN extends Tag,K,LN extends List<K>> LN deserializeIntoList(ListTag nbt, LN list, 
-			Supplier<K> valueFactory, BiConsumer<K, KN> valueDeserializer) {
+	public static <KN extends Tag,K,LN extends List<K>> LN deserializeIntoList(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, LN list, 
+			Supplier<K> valueFactory, TagDeserializerFunction<K, KN> valueDeserializer) {
+		//? neoforge {
+		/*return deserializeIntoList(nbt, list, makeInlineStubbedNbtDeserializer(provider, valueFactory, valueDeserializer));
+		*///?} forge {
 		return deserializeIntoList(nbt, list, makeInlineNbtDeserializer(valueFactory, valueDeserializer));
+		//?}
 	}
 	public static <KN extends Tag,K,LN extends List<K>> LN deserializeIntoList(ListTag nbt, LN list, 
 			Function<KN, K> valueDeserializer) {
@@ -134,19 +160,31 @@ public class ExtNbtUtils {
 	public static <K extends Tag> ListTag serializeTagSet(Set<K> set) {
 		return serializeSet(set, Function.identity());
 	}
-	public static <K extends INBTSerializable<? extends Tag>> ListTag serializeSet(Set<K> set) {
+	public static <T extends Tag, K extends INBTSerializable<T>> ListTag serializeSet(Set<K> set/*? neoforge {*//*, HolderLookup.Provider provider*//*?}*/) {
+		//? neoforge {
+		/*return serializeSet(set, makeInlineStubbedNbtSerializer(provider));
+		*///?} forge {
 		return serializeSet(set, K::serializeNBT);
+		//?}
 	}
 	public static <K, V extends Tag> ListTag serializeSet(Set<K> set, Function<K, V> valueSerializer) {
 		return serializeStream(set.stream(), valueSerializer);
 	}
 	public static <KN extends Tag,K extends INBTSerializable<KN>,SN extends Set<K>> SN deserializeIntoSet(
-			ListTag nbt, SN set, Supplier<K> valueFactory) {
-		return deserializeIntoSet(nbt, set, valueFactory, K::deserializeNBT);
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, SN set, 
+			Supplier<K> valueFactory) {
+		return deserializeIntoSet(/*? neoforge {*//*provider, *//*?}*/nbt, set, valueFactory, K::deserializeNBT);
 	}
-	public static <KN extends Tag,K,SN extends Set<K>> SN deserializeIntoSet(ListTag nbt, SN set, 
-			Supplier<K> valueFactory, BiConsumer<K, KN> valueDeserializer) {
+	public static <KN extends Tag,K,SN extends Set<K>> SN deserializeIntoSet(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, SN set, 
+			Supplier<K> valueFactory, TagDeserializerFunction<K, KN> valueDeserializer) {
+		//? neoforge {
+		/*return deserializeIntoSet(nbt, set, makeInlineStubbedNbtDeserializer(provider, valueFactory, valueDeserializer));
+		*///?} forge {
 		return deserializeIntoSet(nbt, set, makeInlineNbtDeserializer(valueFactory, valueDeserializer));
+		//?}
 	}
 	public static <KN extends Tag,K,SN extends Set<K>> SN deserializeIntoSet(ListTag nbt, SN set, 
 			Function<KN, K> valueDeserializer) {
@@ -159,8 +197,12 @@ public class ExtNbtUtils {
 	public static <K extends Tag> ListTag serializeTagMultiset(Multiset<K> multiset) {
 		return serializeMultiset(multiset, Function.identity());
 	}
-	public static <K extends INBTSerializable<? extends Tag>> ListTag serializeMultiset(Multiset<K> multiset) {
+	public static <T extends Tag, K extends INBTSerializable<T>> ListTag serializeMultiset(Multiset<K> multiset/*? neoforge {*//*, HolderLookup.Provider provider*//*?}*/) {
+		//? neoforge {
+		/*return serializeMultiset(multiset, makeInlineStubbedNbtSerializer(provider));
+		*///?} forge {
 		return serializeMultiset(multiset, K::serializeNBT);
+		//?}
 	}
 	public static <K, V extends Tag> ListTag serializeMultiset(Multiset<K> multiset, Function<K, V> valueSerializer) {
 		return serializeStream(multiset.entrySet().stream(), entry -> {
@@ -171,12 +213,20 @@ public class ExtNbtUtils {
 		});
 	}
 	public static <KN extends Tag,K extends INBTSerializable<KN>,SN extends Multiset<K>> SN deserializeIntoMultiset(
-			ListTag nbt, SN multiset, Supplier<K> valueFactory) {
-		return deserializeIntoMultiset(nbt, multiset, valueFactory, K::deserializeNBT);
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, SN multiset, 
+			Supplier<K> valueFactory) {
+		return deserializeIntoMultiset(/*? neoforge {*//*provider, *//*?}*/nbt, multiset, valueFactory, K::deserializeNBT);
 	}
-	public static <KN extends Tag,K,SN extends Multiset<K>> SN deserializeIntoMultiset(ListTag nbt, SN multiset, 
-			Supplier<K> valueFactory, BiConsumer<K, KN> valueDeserializer) {
+	public static <KN extends Tag,K,SN extends Multiset<K>> SN deserializeIntoMultiset(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, SN multiset, 
+			Supplier<K> valueFactory, TagDeserializerFunction<K, KN> valueDeserializer) {
+		//? neoforge {
+		/*return deserializeIntoMultiset(nbt, multiset, makeInlineStubbedNbtDeserializer(provider, valueFactory, valueDeserializer));
+		*///?} forge {
 		return deserializeIntoMultiset(nbt, multiset, makeInlineNbtDeserializer(valueFactory, valueDeserializer));
+		//?}
 	}
 	@SuppressWarnings("unchecked")
 	public static <KN extends Tag,K,SN extends Multiset<K>> SN deserializeIntoMultiset(ListTag nbt, SN multiset, 
@@ -191,11 +241,17 @@ public class ExtNbtUtils {
 	}
 	
 	// Map Serialization
-	public static <K extends INBTSerializable<? extends Tag>, V extends INBTSerializable<? extends Tag>> ListTag serializeMap(Map<K,V> map) {
-		return ExtNbtUtils.serializeMap(map, K::serializeNBT, V::serializeNBT);
+	public static <KT extends Tag, K extends INBTSerializable<KT>, VT extends Tag, V extends INBTSerializable<VT>> ListTag serializeMap(
+			Map<K,V> map/*? neoforge {*//*,
+			HolderLookup.Provider provider*//*?}*/) {
+		//? neoforge {
+		/*return serializeMap(map, makeInlineStubbedNbtSerializer(provider), makeInlineStubbedNbtSerializer(provider));
+		*///?} forge {
+		return serializeMap(map, K::serializeNBT, V::serializeNBT);
+		//?}
 	}
-	public static <K, V> ListTag serializeMap(Map<K,V> map, 
-			Function<K, ? extends Tag> keySerializer, Function<V,? extends Tag> valueSerializer) {
+	public static <KT extends Tag, K, VT extends Tag, V> ListTag serializeMap(Map<K,V> map, 
+			Function<K, KT> keySerializer, Function<V, VT> valueSerializer) {
 		return serializeStream(map.entrySet().stream(), e->{
 			CompoundTag entryTag = new CompoundTag();
 			
@@ -220,33 +276,59 @@ public class ExtNbtUtils {
 		return map;
 	}
 	
-	public static <KN extends Tag,VN extends Tag,K,V,MN extends Map<K,V>> MN deserializeIntoMap(ListTag nbt, MN map, 
-			BiConsumer<K, KN> keyDeserializer, BiConsumer<V, VN> valueDeserializer, 
+	public static <KN extends Tag,VN extends Tag,K,V,MN extends Map<K,V>> MN deserializeIntoMap(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, MN map, 
+			TagDeserializerFunction<K, KN> keyDeserializer, TagDeserializerFunction<V, VN> valueDeserializer, 
 			Supplier<K> keyFactory, Supplier<V> valueFactory) {
+		//? neoforge {
+		/*return deserializeIntoMap(nbt, map, makeInlineStubbedNbtDeserializer(provider, keyFactory, keyDeserializer), makeInlineStubbedNbtDeserializer(provider, valueFactory, valueDeserializer));
+		*///?} forge {
 		return deserializeIntoMap(nbt, map, makeInlineNbtDeserializer(keyFactory, keyDeserializer), makeInlineNbtDeserializer(valueFactory, valueDeserializer));
+		//?}
 	}
-	public static <KN extends Tag,VN extends Tag,K,V,MN extends Map<K,V>> MN deserializeIntoMap(ListTag nbt, MN map, 
-			Function<KN, K> keyDeserializer, BiConsumer<V, VN> valueDeserializer, 
+	public static <KN extends Tag,VN extends Tag,K,V,MN extends Map<K,V>> MN deserializeIntoMap(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, MN map, 
+			Function<KN, K> keyDeserializer, TagDeserializerFunction<V, VN> valueDeserializer, 
 			Supplier<V> valueFactory) {
+		//? neoforge {
+		/*return deserializeIntoMap(nbt, map, keyDeserializer, makeInlineStubbedNbtDeserializer(provider, valueFactory, valueDeserializer));
+		*///?} forge {
 		return deserializeIntoMap(nbt, map, keyDeserializer, makeInlineNbtDeserializer(valueFactory, valueDeserializer));
+		//?}
 	}
-	public static <KN extends Tag,VN extends Tag,K,V,MN extends Map<K,V>> MN deserializeIntoMap(ListTag nbt, MN map, 
-			BiConsumer<K, KN> keyDeserializer, Function<VN, V> valueDeserializer, 
+	public static <KN extends Tag,VN extends Tag,K,V,MN extends Map<K,V>> MN deserializeIntoMap(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, MN map, 
+			TagDeserializerFunction<K, KN> keyDeserializer, Function<VN, V> valueDeserializer, 
 			Supplier<K> keyFactory) {
+		//? neoforge {
+		/*return deserializeIntoMap(nbt, map, makeInlineStubbedNbtDeserializer(provider, keyFactory, keyDeserializer), valueDeserializer);
+		*///?} forge {
 		return deserializeIntoMap(nbt, map, makeInlineNbtDeserializer(keyFactory, keyDeserializer), valueDeserializer);
+		//?}
 	}
 	
-	public static <KN extends Tag,VN extends Tag,K extends INBTSerializable<KN>,V extends INBTSerializable<VN>,MN extends Map<K,V>> MN deserializeIntoMap(ListTag nbt, MN map, 
+	public static <KN extends Tag,VN extends Tag,K extends INBTSerializable<KN>,V extends INBTSerializable<VN>,MN extends Map<K,V>> MN deserializeIntoMap(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, MN map, 
 			Supplier<K> keyFactory, Supplier<V> valueFactory) {
-		return deserializeIntoMap(nbt, map, K::deserializeNBT, V::deserializeNBT, keyFactory, valueFactory);
+		return deserializeIntoMap(/*? neoforge {*//*provider, *//*?}*/nbt, map, K::deserializeNBT, V::deserializeNBT, keyFactory, valueFactory);
 	}
 	
 	// Multimap Serialization
-	public static <K extends INBTSerializable<? extends Tag>, V extends INBTSerializable<? extends Tag>> ListTag serializeMultimap(Multimap<K,V> map) {
-		return ExtNbtUtils.serializeMultimap(map, K::serializeNBT, V::serializeNBT);
+	public static <KT extends Tag, K extends INBTSerializable<KT>, VT extends Tag, V extends INBTSerializable<VT>> ListTag serializeMultimap(
+			Multimap<K,V> map/*? neoforge {*//*,
+			HolderLookup.Provider provider*//*?}*/) {
+		//? neoforge {
+		/*return serializeMultimap(map, makeInlineStubbedNbtSerializer(provider), makeInlineStubbedNbtSerializer(provider));
+		*///?} forge {
+		return serializeMultimap(map, K::serializeNBT, V::serializeNBT);
+		//?}
 	}
-	public static <K, V> ListTag serializeMultimap(Multimap<K,V> map, 
-			Function<K, ? extends Tag> keySerializer, Function<V,? extends Tag> valueSerializer) {
+	public static <KT extends Tag, K, KV extends Tag, V> ListTag serializeMultimap(Multimap<K,V> map, 
+			Function<K, KT> keySerializer, Function<V, KV> valueSerializer) {
 		return serializeStream(map.asMap().entrySet().stream(), e -> {
 			CompoundTag entryTag = new CompoundTag();
 			
@@ -275,25 +357,45 @@ public class ExtNbtUtils {
 		return map;
 	}
 	
-	public static <KN extends Tag,VN extends Tag,K,V,MN extends Multimap<K,V>> MN deserializeIntoMultimap(ListTag nbt, MN map, 
-			BiConsumer<K, KN> keyDeserializer, BiConsumer<V, VN> valueDeserializer, 
+	public static <KN extends Tag,VN extends Tag,K,V,MN extends Multimap<K,V>> MN deserializeIntoMultimap(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, MN map, 
+			TagDeserializerFunction<K, KN> keyDeserializer, TagDeserializerFunction<V, VN> valueDeserializer, 
 			Supplier<K> keyFactory, Supplier<V> valueFactory) {
+		//? neoforge {
+		/*return deserializeIntoMultimap(nbt, map, makeInlineStubbedNbtDeserializer(provider, keyFactory, keyDeserializer), makeInlineStubbedNbtDeserializer(provider, valueFactory, valueDeserializer));
+		*///?} forge {
 		return deserializeIntoMultimap(nbt, map, makeInlineNbtDeserializer(keyFactory, keyDeserializer), makeInlineNbtDeserializer(valueFactory, valueDeserializer));
+		//?}
 	}
-	public static <KN extends Tag,VN extends Tag,K,V,MN extends Multimap<K,V>> MN deserializeIntoMultimap(ListTag nbt, MN map, 
-			Function<KN, K> keyDeserializer, BiConsumer<V, VN> valueDeserializer, 
+	public static <KN extends Tag,VN extends Tag,K,V,MN extends Multimap<K,V>> MN deserializeIntoMultimap(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, MN map, 
+			Function<KN, K> keyDeserializer, TagDeserializerFunction<V, VN> valueDeserializer, 
 			Supplier<V> valueFactory) {
+		//? neoforge {
+		/*return deserializeIntoMultimap(nbt, map, keyDeserializer, makeInlineStubbedNbtDeserializer(provider, valueFactory, valueDeserializer));
+		*///?} forge {
 		return deserializeIntoMultimap(nbt, map, keyDeserializer, makeInlineNbtDeserializer(valueFactory, valueDeserializer));
+		//?}
 	}
-	public static <KN extends Tag,VN extends Tag,K,V,MN extends Multimap<K,V>> MN deserializeIntoMultimap(ListTag nbt, MN map, 
-			BiConsumer<K, KN> keyDeserializer, Function<VN, V> valueDeserializer, 
+	public static <KN extends Tag,VN extends Tag,K,V,MN extends Multimap<K,V>> MN deserializeIntoMultimap(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, MN map, 
+			TagDeserializerFunction<K, KN> keyDeserializer, Function<VN, V> valueDeserializer, 
 			Supplier<K> keyFactory) {
+		//? neoforge {
+		/*return deserializeIntoMultimap(nbt, map, makeInlineStubbedNbtDeserializer(provider, keyFactory, keyDeserializer), valueDeserializer);
+		*///?} forge {
 		return deserializeIntoMultimap(nbt, map, makeInlineNbtDeserializer(keyFactory, keyDeserializer), valueDeserializer);
+		//?}
 	}
 	
-	public static <KN extends Tag,VN extends Tag,K extends INBTSerializable<KN>,V extends INBTSerializable<VN>,MN extends Multimap<K,V>> MN deserializeIntoMultimap(ListTag nbt, MN map, 
+	public static <KN extends Tag,VN extends Tag,K extends INBTSerializable<KN>,V extends INBTSerializable<VN>,MN extends Multimap<K,V>> MN deserializeIntoMultimap(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			ListTag nbt, MN map, 
 			Supplier<K> keyFactory, Supplier<V> valueFactory) {
-		return deserializeIntoMultimap(nbt, map, K::deserializeNBT, V::deserializeNBT, keyFactory, valueFactory);
+		return deserializeIntoMultimap(/*? neoforge {*//*provider, *//*?}*/nbt, map, K::deserializeNBT, V::deserializeNBT, keyFactory, valueFactory);
 	}
 	
 	// Enum Serialization
@@ -325,28 +427,34 @@ public class ExtNbtUtils {
 	
 	// Resource Location Serialization
 	public static Tag serializeResourceLocation(ResourceLocation resourceLocation) {
-		return ResourceLocation.CODEC.encodeStart(NbtOps.INSTANCE, resourceLocation).getOrThrow(false, s->{});
+		return ResourceLocation.CODEC.encodeStart(NbtOps.INSTANCE, resourceLocation).getOrThrow(/*? < 1.21 {*/false, s->{}/*?}*/);
 	}
 	public static ResourceLocation deserializeResourceLocation(Tag tag) {
-		return ResourceLocation.CODEC.decode(NbtOps.INSTANCE, tag).getOrThrow(false, s->{}).getFirst();
+		return ResourceLocation.CODEC.decode(NbtOps.INSTANCE, tag).getOrThrow(/*? < 1.21 {*/false, s->{}/*?}*/).getFirst();
 	}
 	
 	// Resource Key Serialization
 	public static <T> Tag serializeResourceKey(ResourceKey<? extends Registry<T>> registryKey, ResourceKey<T> resourceKey) {
-		return ResourceKey.codec(registryKey).encodeStart(NbtOps.INSTANCE, resourceKey).getOrThrow(false, s->{});
+		return ResourceKey.codec(registryKey).encodeStart(NbtOps.INSTANCE, resourceKey).getOrThrow(/*? < 1.21 {*/false, s->{}/*?}*/);
 	}
 	public static <T> ResourceKey<T> deserializeResourceKey(ResourceKey<? extends Registry<T>> registryKey, Tag tag) {
-		return ResourceKey.codec(registryKey).decode(NbtOps.INSTANCE, tag).getOrThrow(false, s->{}).getFirst();
+		return ResourceKey.codec(registryKey).decode(NbtOps.INSTANCE, tag).getOrThrow(/*? < 1.21 {*/false, s->{}/*?}*/).getFirst();
 	}
 	
 	// Registry Value Serialization
+	//? forge {
 	public static <T> CompoundTag serializeRegistryValue(T registeredValue, IForgeRegistry<T> registry) {
 		return serializeRegistryObject(RegistryObject.create(registry.getKey(registeredValue), registry));
 	}
+	//?}
 	public static <T> CompoundTag serializeRegistryValue(T registeredValue, Registry<T> registry) {
+		//? neoforge {
+		/*return serializeRegistryObject(RegistryObject.create(registry.key(), registry.getKey(registeredValue)));
+		*///?} forge {
 		return serializeRegistryObject(RegistryObject.create(registry.getKey(registeredValue), registry.key(), "ext_serializer"));
+		//?}
 	}
-	public static <T> CompoundTag serializeRegistryObject(RegistryObject<T> registryObject) {
+	public static <T> CompoundTag serializeRegistryObject(RegistryObject<T/*? neoforge {*//*, ? extends T*//*?}*/> registryObject) {
 		val registryKey = registryObject.getKey();
 		CompoundTag root = new CompoundTag();
 		
@@ -358,36 +466,100 @@ public class ExtNbtUtils {
 	public static <T, R extends Registry<T>> Optional<Tag> trySerializeVanillaRegistryValue(T registeredValue, ResourceKey<R> registryKey) {
 		val registry = VanillaRegistries.createLookup().lookupOrThrow(registryKey);
 		val valueKey = registry.listElementIds()
+				//? neoforge {
+				/*.filter( k->registry.get(k).map(v->v.value().equals(registeredValue)).orElse(false) )
+				*///?} forge {
 				.filter( k->registry.get(k).map(v->v.get().equals(registeredValue)).orElse(false) )
+				//?}
 				.findAny();
 		
 		return valueKey.map(k->serializeResourceKey(registryKey, k));
 	}
 	
-	public static RegistryObject<?> deserializeRegistryObject(CompoundTag nbt) {
+	public static RegistryObject<?/*? neoforge {*//*, ?*//*?}*/> deserializeRegistryObject(CompoundTag nbt) {
 		val registryLocation = deserializeResourceLocation(nbt.get("registry"));
 		val name = deserializeResourceLocation(nbt.get("name"));
 		
+		//? neoforge {
+		/*return RegistryObject.create(registryLocation, name);
+		*///?} forge {
 		return RegistryObject.createOptional(name, registryLocation, name.getNamespace());
+		//?}
 	}
 	public static <T, R extends Registry<T>> Optional<T> tryDeserializeVanillaRegistryValue(Tag nbt, ResourceKey<R> registryKey) {
 		val registry = VanillaRegistries.createLookup().lookupOrThrow(registryKey);
+		//? neoforge {
+		/*return registry.get(deserializeResourceKey(registryKey, nbt))
+				.filter(Reference::isBound)
+				.map(Reference::value);
+		*///?} forge {
 		return registry.get(deserializeResourceKey(registryKey, nbt)).map(Reference::get);
+		//?}
 	}
 
-	public static <T extends Tag, U> U inlineNbtDeserialize(T tag, Supplier<U> instanceSupplier, BiConsumer<U,T> deserializerFunction) {
+	public static <T extends Tag, U> U inlineNbtDeserialize(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			T tag, 
+			Supplier<U> instanceSupplier, 
+			TagDeserializerFunction<U,T> deserializerFunction) {
 		U instance = instanceSupplier.get();
-		deserializerFunction.accept(instance, tag);
+		deserializerFunction.deserialize(instance, /*? neoforge {*//*provider, *//*?}*/tag);
 		return instance;
 	}
-	public static <T extends Tag, U extends INBTSerializable<T>> U inlineNbtDeserialize(T tag, Supplier<U> instanceSupplier) {
-		return inlineNbtDeserialize(tag, instanceSupplier, INBTSerializable::deserializeNBT);
+	public static <T extends Tag, U extends INBTSerializable<T>> U inlineNbtDeserialize(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			T tag, 
+			Supplier<U> instanceSupplier) {
+		return inlineNbtDeserialize(/*? neoforge {*//*provider, *//*?}*/tag, instanceSupplier, INBTSerializable::deserializeNBT);
 	}
-	public static <T extends Tag, U extends INBTSerializable<T>> Function<T,U> makeInlineNbtDeserializer(Supplier<U> instanceSupplier) {
-		return tag -> inlineNbtDeserialize(tag, instanceSupplier);
+	public static <T extends Tag, U extends IContextFreeNBTSerializable<T>> U inlineNbtDeserializeContextFree(
+			T tag, 
+			Supplier<U> instanceSupplier) {
+		return inlineNbtDeserialize(/*? neoforge {*//*null, *//*?}*/tag, instanceSupplier, INBTSerializable::deserializeNBT);
 	}
-	public static <T extends Tag, U> Function<T,U> makeInlineNbtDeserializer(Supplier<U> instanceSupplier, BiConsumer<U,T> deserializerFunction) {
-		return tag -> inlineNbtDeserialize(tag, instanceSupplier, deserializerFunction);
+	public static <T extends Tag, U extends INBTSerializable<T>> TagInlineDeserializerFunction<T,U> makeInlineNbtDeserializer(Supplier<U> instanceSupplier) {
+		return (/*? neoforge {*//*provider, *//*?}*/tag) -> inlineNbtDeserialize(/*? neoforge {*//*provider, *//*?}*/tag, instanceSupplier);
 	}
-
+	public static <T extends Tag, U> TagInlineDeserializerFunction<T,U> makeInlineNbtDeserializer(Supplier<U> instanceSupplier, TagDeserializerFunction<U,T> deserializerFunction) {
+		return (/*? neoforge {*//*provider, *//*?}*/tag) -> inlineNbtDeserialize(/*? neoforge {*//*provider, *//*?}*/tag, instanceSupplier, deserializerFunction);
+	}
+	
+	public static <T extends Tag, U> T inlineNbtSerialize(
+			U instance,
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			TagSerializerFunction<U, T> serializerFunction) {
+		return serializerFunction.serialize(instance/*? neoforge {*//*, provider*//*?}*/);
+	}
+	public static <T extends Tag, U extends INBTSerializable<T>> T inlineNbtSerialize(
+			U instance/*? neoforge {*//*,
+			HolderLookup.Provider provider*//*?}*/) {
+		return inlineNbtSerialize(instance, /*? neoforge {*//*provider, *//*?}*/INBTSerializable::serializeNBT);
+	}
+	public static <T extends Tag, U extends INBTSerializable<T>> TagInlineSerializerFunction<T,U> makeInlineNbtSerializer() {
+		return (instance/*? neoforge {*//*, provider*//*?}*/) -> inlineNbtSerialize(instance/*? neoforge {*//*, provider*//*?}*/);
+	}
+	public static <T extends Tag, U> TagInlineSerializerFunction<T,U> makeInlineNbtSerializer(TagSerializerFunction<U,T> serializerFunction) {
+		return (instance/*? neoforge {*//*, provider*//*?}*/) -> inlineNbtSerialize(instance, /*? neoforge {*//*provider, *//*?}*/ serializerFunction);
+	}
+	
+	public static <T extends Tag, U extends INBTSerializable<T>> Function<U,T> makeInlineStubbedNbtSerializer(
+			/*? neoforge {*//*HolderLookup.Provider provider*//*?}*/) {
+		return (value) -> inlineNbtSerialize(value/*? neoforge {*//*, provider*//*?}*/);
+	}
+	public static <T extends Tag, U> Function<U,T> makeInlineStubbedNbtSerializer(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			TagSerializerFunction<U, T> serializerFunction) {
+		return (value) -> inlineNbtSerialize(value, /*? neoforge {*//*provider,*//*?}*/ serializerFunction);
+	}
+	public static <T extends Tag, U extends INBTSerializable<T>> Function<T,U> makeInlineStubbedNbtDeserializer(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			Supplier<U> instanceSupplier) {
+		return (tag) -> inlineNbtDeserialize(/*? neoforge {*//*provider,*//*?}*/ tag, instanceSupplier);
+	}
+	public static <T extends Tag, U> Function<T,U> makeInlineStubbedNbtDeserializer(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			Supplier<U> instanceSupplier, 
+			TagDeserializerFunction<U, T> deserializerFunction) {
+		return (tag) -> inlineNbtDeserialize(/*? neoforge {*//*provider,*//*?}*/ tag, instanceSupplier, deserializerFunction);
+	}
 }

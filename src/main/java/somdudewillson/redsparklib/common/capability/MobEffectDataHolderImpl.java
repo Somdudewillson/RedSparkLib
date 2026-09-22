@@ -14,21 +14,32 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
+import net.minecraftforge.registries.RegistryObject;
+//? neoforge {
+/*import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraft.core.Holder;
+import net.neoforged.neoforge.network.PacketDistributor;
+import somdudewillson.redsparklib.platform.neoforge.network.clientbound.MobEffectCustomDataPayload;
+*///?} forge {
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import somdudewillson.redsparklib.platform.forge.network.SimplePacketHandler;
+import somdudewillson.redsparklib.platform.forge.network.clientbound.MobEffectCustomDataPacket;
+//?}
+import somdudewillson.redsparklib.platform.PlatformRegistryInstances;
 import somdudewillson.redsparklib.RedSparkLib;
 import somdudewillson.redsparklib.common.RedSparkLibCapabilities;
-import somdudewillson.redsparklib.network.SimplePacketHandler;
-import somdudewillson.redsparklib.network.clientbound.MobEffectCustomDataPacket;
 
 @RequiredArgsConstructor
+//? neoforge {
+/*@EventBusSubscriber(modid = RedSparkLib.MODID)
+*///?} forge {
 @Mod.EventBusSubscriber(modid = RedSparkLib.MODID, bus = Bus.FORGE)
+//?}
 public class MobEffectDataHolderImpl implements IMobEffectDataHolder {
 	private final ReentrantReadWriteLock serializationLock = new ReentrantReadWriteLock(true);
 	
@@ -39,7 +50,7 @@ public class MobEffectDataHolderImpl implements IMobEffectDataHolder {
 	protected final LivingEntity livingEntity;
 
 	@Override
-	public CompoundTag getDataForMobEffect(RegistryObject<? extends MobEffect> mobEffect) {
+	public CompoundTag getDataForMobEffect(RegistryObject</*? neoforge {*//*MobEffect, *//*?}*/? extends MobEffect> mobEffect) {
 		CompoundTag data = new CompoundTag();
 		
 		serializationLock.readLock().lock();
@@ -53,7 +64,7 @@ public class MobEffectDataHolderImpl implements IMobEffectDataHolder {
 	}
 
 	@Override
-	public boolean hasDataForMobEffect(RegistryObject<? extends MobEffect> mobEffect) {
+	public boolean hasDataForMobEffect(RegistryObject</*? neoforge {*//*MobEffect, *//*?}*/? extends MobEffect> mobEffect) {
 		boolean hasData = false;
 		
 		serializationLock.readLock().lock();
@@ -67,7 +78,7 @@ public class MobEffectDataHolderImpl implements IMobEffectDataHolder {
 	}
 
 	@Override
-	public void setDataForMobEffect(RegistryObject<? extends MobEffect> mobEffect, CompoundTag data) {
+	public void setDataForMobEffect(RegistryObject</*? neoforge {*//*MobEffect, *//*?}*/? extends MobEffect> mobEffect, CompoundTag data) {
 		data = data.copy();
 		
 		serializationLock.readLock().lock();
@@ -81,7 +92,7 @@ public class MobEffectDataHolderImpl implements IMobEffectDataHolder {
 	}
 
 	@Override
-	public CompoundTag getOrInitDataForMobEffect(RegistryObject<? extends MobEffect> mobEffect, Supplier<CompoundTag> dataSupplier) {
+	public CompoundTag getOrInitDataForMobEffect(RegistryObject</*? neoforge {*//*MobEffect, *//*?}*/? extends MobEffect> mobEffect, Supplier<CompoundTag> dataSupplier) {
 		CompoundTag data = dataSupplier.get();
 		
 		serializationLock.readLock().lock();
@@ -130,7 +141,7 @@ public class MobEffectDataHolderImpl implements IMobEffectDataHolder {
 			for (int i=0; i<tag.size(); i++) {
 				val entryTag = tag.getCompound(i);
 				
-				val entryPotionId = new ResourceLocation(entryTag.getString(POTION_ID_KEY));
+				val entryPotionId = ResourceLocation.tryParse(entryTag.getString(POTION_ID_KEY));
 				val entryData = entryTag.getCompound(POTION_DATA_KEY);
 				
 				potionDataMap.put(entryPotionId, entryData);
@@ -144,13 +155,19 @@ public class MobEffectDataHolderImpl implements IMobEffectDataHolder {
 	
 	protected void sendUpdatePacket() {
 		if (livingEntity.level().isClientSide) { return; }
+		
+		//? neoforge {
+		/*PacketDistributor.sendToPlayersTrackingEntityAndSelf(livingEntity, new MobEffectCustomDataPayload(livingEntity.getId(), livingEntity.level().registryAccess(), this));
+		*///?} forge {
 		SimplePacketHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(()->livingEntity), new MobEffectCustomDataPacket(livingEntity.getId(), this));
+		//?}
 	}
 	
 	public void tick() {
 		val presentMobEffects = livingEntity.getActiveEffects().stream()
 			.map(MobEffectInstance::getEffect)
-			.map(ForgeRegistries.MOB_EFFECTS::getKey)
+			/*? neoforge {*//*.map(Holder::value)*//*?}*/
+			.map(PlatformRegistryInstances.MOB_EFFECTS::getKey)
 			.collect(Collectors.toUnmodifiableSet());
 		
 		serializationLock.readLock().lock();
@@ -167,9 +184,9 @@ public class MobEffectDataHolderImpl implements IMobEffectDataHolder {
 	
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onLivingTickEvent(LivingTickEvent event) {
-		if (event.isCanceled()) { return; }
+		/*? forge {*/if (event.isCanceled()) { return; }/*?}*/
 		if ((event.getEntity().level().getGameTime()+event.getEntity().getId() & 7) != 0) { return; }
-		val mobEffectDataCap = event.getEntity().getCapability(RedSparkLibCapabilities.MOB_EFFECT_DATA_HOLDER).orElse(null);
+		val mobEffectDataCap = event.getEntity().getCapability(RedSparkLibCapabilities.MOB_EFFECT_DATA_HOLDER)/*? forge {*/.orElse(null)/*?}*/;
 		if (mobEffectDataCap == null) { return; }
 		
 		mobEffectDataCap.tick();

@@ -1,16 +1,33 @@
 package somdudewillson.redsparklib.common.utils;
 
+import java.lang.reflect.Field;
+import net.minecraft.server.Bootstrap;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
+//? neoforge {
+/*import net.minecraft.core.Holder;
+*///?}
 
 @ExtendWith(MockitoExtension.class)
 public class GenericUtilsTest {
+
+    @BeforeAll
+    public static void setup() {
+        try {
+            Field field = Bootstrap.class.getDeclaredField("isBootstrapped");
+            field.setAccessible(true);
+            field.setBoolean(null, true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Mock
     private MobEffectInstance effectInstance;
@@ -20,7 +37,7 @@ public class GenericUtilsTest {
 
     @Test
     public void testCalculateHealthFromPotionEffectInstantDamage() {
-        when(effectInstance.getEffect()).thenReturn(mobEffect);
+        when(effectInstance.getEffect()).thenReturn(/*? neoforge {*//*Holder.direct(mobEffect)*//*?} forge {*/mobEffect/*?}*/);
         when(mobEffect.getDescriptionId()).thenReturn("effect.minecraft.instant_damage");
         when(effectInstance.getAmplifier()).thenReturn(1); // Amplifier 1 (level II)
         when(effectInstance.getDuration()).thenReturn(1);
@@ -32,7 +49,7 @@ public class GenericUtilsTest {
 
     @Test
     public void testCalculateHealthFromPotionEffectInstantHealth() {
-        when(effectInstance.getEffect()).thenReturn(mobEffect);
+        when(effectInstance.getEffect()).thenReturn(/*? neoforge {*//*Holder.direct(mobEffect)*//*?} forge {*/mobEffect/*?}*/);
         when(mobEffect.getDescriptionId()).thenReturn("effect.minecraft.instant_health");
         when(effectInstance.getAmplifier()).thenReturn(0); // Amplifier 0 (level I)
         when(effectInstance.getDuration()).thenReturn(1);
@@ -44,7 +61,7 @@ public class GenericUtilsTest {
 
     @Test
     public void testCalculateHealthFromPotionEffectPoison() {
-        when(effectInstance.getEffect()).thenReturn(mobEffect);
+        when(effectInstance.getEffect()).thenReturn(/*? neoforge {*//*Holder.direct(mobEffect)*//*?} forge {*/mobEffect/*?}*/);
         when(mobEffect.getDescriptionId()).thenReturn("effect.minecraft.poison");
         when(effectInstance.getAmplifier()).thenReturn(0);
         when(effectInstance.getDuration()).thenReturn(100);

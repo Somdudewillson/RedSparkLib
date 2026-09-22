@@ -8,6 +8,9 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+//? neoforge {
+/*import net.minecraft.core.HolderLookup;
+*///?}
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -35,9 +38,17 @@ public class OptNbtUtils {
 	@Nullable
 	public static <T> Tag putSuppliedOptional(CompoundTag tag, String pKey, Supplier<Optional<T>> valueSupplier, Function<T, ? extends Tag> serializer) { return put(tag, pKey, valueSupplier.get(), serializer); }
 	@Nullable
-	public static <T extends INBTSerializable<?>> Tag putSerializable(CompoundTag tag, String pKey, Optional<T> value) { return put(tag, pKey, value.map(INBTSerializable::serializeNBT).orElse(null)); }
+	public static <T extends INBTSerializable<?>> Tag putSerializable(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			CompoundTag tag, String pKey, Optional<T> value) {
+		return put(tag, pKey, value.map(v->v.serializeNBT(/*? neoforge {*//*provider*//*?}*/)).orElse(null));
+	}
 	@Nullable
-	public static <T extends INBTSerializable<?>> Tag putSerializable(CompoundTag tag, String pKey, @Nullable T value) { return putSerializable(tag, pKey, Optional.ofNullable(value)); }
+	public static <T extends INBTSerializable<?>> Tag putSerializable(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			CompoundTag tag, String pKey, @Nullable T value) {
+		return putSerializable(/*? neoforge {*//*provider, *//*?}*/tag, pKey, Optional.ofNullable(value));
+	}
 
 
 	public static void putByte(CompoundTag tag, String pKey, @Nullable Byte pValue) {
@@ -135,19 +146,25 @@ public class OptNbtUtils {
 		return Optional.ofNullable(tag.get(pKey));
 	}
 	@SuppressWarnings("unchecked")
-	public static <T extends INBTSerializable<U>, U extends Tag> Optional<T> getSerializable(CompoundTag tag, String pKey, Class<U> tagClass, Supplier<T> valueSupplier) {
+	public static <T extends INBTSerializable<U>, U extends Tag> Optional<T> getSerializable(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			CompoundTag tag, String pKey, 
+			Class<U> tagClass, Supplier<T> valueSupplier) {
 		return get(tag, pKey).map(t->{
 			T instance = valueSupplier.get();
 			if (tagClass.isAssignableFrom(t.getClass())) {
-				instance.deserializeNBT((U)t);
+				instance.deserializeNBT(/*? neoforge {*//*provider, *//*?}*/(U)t);
 			} else {
 				return null;
 			}
 			return instance;
 		});
 	}
-	public static <T extends INBTSerializable<CompoundTag>> Optional<T> getSerializable(CompoundTag tag, String pKey, Supplier<T> valueSupplier) {
-		return getSerializable(tag, pKey, CompoundTag.class, valueSupplier);
+	public static <T extends INBTSerializable<CompoundTag>> Optional<T> getSerializable(
+			/*? neoforge {*//*HolderLookup.Provider provider,*//*?}*/
+			CompoundTag tag, String pKey, 
+			Supplier<T> valueSupplier) {
+		return getSerializable(/*? neoforge {*//*provider, *//*?}*/tag, pKey, CompoundTag.class, valueSupplier);
 	}
 
 	public static Optional<Byte> getByte(CompoundTag tag, String pKey) {

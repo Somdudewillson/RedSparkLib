@@ -1,5 +1,6 @@
 package somdudewillson.redsparklib.common.data.loot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -7,8 +8,12 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
+//? neoforge {
+/*import net.minecraft.core.HolderLookup;
+*///?}
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.level.block.Block;
 import somdudewillson.redsparklib.common.data.RedSparkLibSimpleDatagenManager;
 import somdudewillson.redsparklib.common.data.task.SimpleDatagenTask;
 
@@ -16,9 +21,27 @@ public class RedSparkLibBlockLootTableProvider extends BlockLootSubProvider {
     protected static final Logger LOGGER = LogUtils.getLogger();
 	private final RedSparkLibSimpleDatagenManager manager;
 
+	//? neoforge {
+	/*protected RedSparkLibBlockLootTableProvider(RedSparkLibSimpleDatagenManager manager, HolderLookup.Provider registries) {
+		super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);
+		this.manager = manager;
+	}
+	*///?} forge {
 	protected RedSparkLibBlockLootTableProvider(RedSparkLibSimpleDatagenManager manager) {
 		super(Set.of(), FeatureFlags.REGISTRY.allFlags());
 		this.manager = manager;
+	}
+	//?}
+
+	@Override
+	protected Iterable<Block> getKnownBlocks() {
+		List<Block> knownBlocks = new ArrayList<>();
+		for (SimpleDatagenTask<?, RedSparkLibBlockLootTableProvider> task : manager.getFilteredDatagenTasks(RedSparkLibBlockLootTableProvider.class)) {
+			if (task.getTargetRegistry() != null && task.getTargetRegistry().get() instanceof Block b) {
+				knownBlocks.add(b);
+			}
+		}
+		return knownBlocks;
 	}
 
 	@Override

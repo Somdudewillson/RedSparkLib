@@ -1,6 +1,3 @@
-loomx.loom_version="1.16-SNAPSHOT"
-
-
 mod.id = "redsparklib"
 mod.name = "RedSparkLib"
 mod.group = "com.github.somdudewillson"
@@ -24,15 +21,6 @@ id = "somdudewillson"
 name = "Somdudewillson"
 url = "https://github.com/ghost"
 
-[fabric]
-deps.fabric-loader = "0.16.10"
-
-[fabric."1.20.1"]
-deps.minecraft = "1.20.1"
-deps.fabric-loader = "0.16.10"
-deps.fabric-api = "0.92.2+1.20.1"
-deps.modmenu = "7.2.2"
-
 [forge]
 
 [forge."1.20.1"]
@@ -44,5 +32,3 @@ deps.forge = "47.3.0"
 [neoforge."1.21.1"]
 deps.minecraft = "1.21.1"
 deps.neoforge = "21.1.219"
-
-

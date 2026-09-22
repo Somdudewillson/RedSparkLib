@@ -2,27 +2,23 @@ package somdudewillson.redsparklib.common.data.task;
 
 import java.util.function.Predicate;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+//? neoforge {
+/*import java.util.function.Supplier;
+*///?} forge {
 import net.minecraftforge.registries.RegistryObject;
+//?}
 import org.slf4j.Logger;
 
 @RequiredArgsConstructor
 public abstract class SimpleDatagenTask<T, P> {
-	@RequiredArgsConstructor
-	@FieldDefaults(makeFinal=true, level=AccessLevel.PRIVATE)
 	@Getter
-	public static enum DatagenTaskType {
-		ITEM_MODEL,
-		BLOCK_MODEL,
-		ITEM_TAGS,
-		BLOCK_TAGS,
-		BLOCK_LOOT;
-	}
-	@Getter
+	//? neoforge {
+	/*protected final Supplier<T> targetRegistry;
+	*///?} forge {
 	protected final RegistryObject<T> targetRegistry;
+	//?}
 	
 	public <L extends P> void buildData(L dataProvider, Logger logger) {
 		buildData(dataProvider);

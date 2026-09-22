@@ -8,7 +8,7 @@ public class ResourceLocationUtils {
 	private final String modId;
 	
 	public ResourceLocation modPath(String path) {
-		return new ResourceLocation(modId, path);
+		return ResourceLocation.tryBuild(modId, path);
 	}
 	
 	public ResourceLocation modTex(String path) {
@@ -20,6 +20,6 @@ public class ResourceLocationUtils {
 	}
 	
 	public static ResourceLocation mcPath(String path) {
-		return new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, path);
+		return ResourceLocation.tryBuild(ResourceLocation.DEFAULT_NAMESPACE, path);
 	}
 }

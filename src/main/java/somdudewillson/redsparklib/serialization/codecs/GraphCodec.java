@@ -28,7 +28,7 @@ import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.ShortTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.common.util.INBTSerializable;
+import somdudewillson.redsparklib.common.utils.IContextFreeNBTSerializable;
 
 public class GraphCodec<A extends Graph<N>, N> extends BaseGraphCodec<A, N> {
 	
@@ -36,44 +36,44 @@ public class GraphCodec<A extends Graph<N>, N> extends BaseGraphCodec<A, N> {
 		super(elementCodec);
 	}
 
-	public static <T extends INBTSerializable<K>, G extends Graph<T>, K extends Tag> GraphCodec<G, T> forINbtSerializable(Class<K> tagClass, Class<T> valueClass, Supplier<T> instanceSupplier) {
-    	return new GraphCodec<G, T>(new NbtSerializableCodec<>(tagClass, valueClass, instanceSupplier));
+	public static <T extends IContextFreeNBTSerializable<K>, G extends Graph<T>, K extends Tag> GraphCodec<G, T> forINbtSerializable(Class<K> tagClass, Class<T> valueClass, Supplier<T> instanceSupplier) {
+    	return new GraphCodec<G, T>(new NbtContextFreeSerializableCodec<>(tagClass, valueClass, instanceSupplier));
     }
 	
-	public static <T extends INBTSerializable<CompoundTag>, G extends Graph<T>> GraphCodec<G, T> compound(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<CompoundTag>, G extends Graph<T>> GraphCodec<G, T> compound(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(CompoundTag.class, targetClass, instanceSupplier);
 	}
-	public static <T extends INBTSerializable<ListTag>, G extends Graph<T>> GraphCodec<G, T> list(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<ListTag>, G extends Graph<T>> GraphCodec<G, T> list(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(ListTag.class, targetClass, instanceSupplier);
 	}
-	public static <T extends INBTSerializable<ByteArrayTag>, G extends Graph<T>> GraphCodec<G, T> byteArray(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<ByteArrayTag>, G extends Graph<T>> GraphCodec<G, T> byteArray(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(ByteArrayTag.class, targetClass, instanceSupplier);
 	}
-	public static <T extends INBTSerializable<IntArrayTag>, G extends Graph<T>> GraphCodec<G, T> intArray(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<IntArrayTag>, G extends Graph<T>> GraphCodec<G, T> intArray(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(IntArrayTag.class, targetClass, instanceSupplier);
 	}
-	public static <T extends INBTSerializable<LongArrayTag>, G extends Graph<T>> GraphCodec<G, T> longArray(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<LongArrayTag>, G extends Graph<T>> GraphCodec<G, T> longArray(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(LongArrayTag.class, targetClass, instanceSupplier);
 	}
-	public static <T extends INBTSerializable<StringTag>, G extends Graph<T>> GraphCodec<G, T> string(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<StringTag>, G extends Graph<T>> GraphCodec<G, T> string(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(StringTag.class, targetClass, instanceSupplier);
 	}
-	public static <T extends INBTSerializable<ByteTag>, G extends Graph<T>> GraphCodec<G, T> byteT(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<ByteTag>, G extends Graph<T>> GraphCodec<G, T> byteT(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(ByteTag.class, targetClass, instanceSupplier);
 	}
-	public static <T extends INBTSerializable<ShortTag>, G extends Graph<T>> GraphCodec<G, T> shortT(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<ShortTag>, G extends Graph<T>> GraphCodec<G, T> shortT(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(ShortTag.class, targetClass, instanceSupplier);
 	}
-	public static <T extends INBTSerializable<IntTag>, G extends Graph<T>> GraphCodec<G, T> intT(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<IntTag>, G extends Graph<T>> GraphCodec<G, T> intT(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(IntTag.class, targetClass, instanceSupplier);
 	}
-	public static <T extends INBTSerializable<LongTag>, G extends Graph<T>> GraphCodec<G, T> longT(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<LongTag>, G extends Graph<T>> GraphCodec<G, T> longT(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(LongTag.class, targetClass, instanceSupplier);
 	}
-	public static <T extends INBTSerializable<FloatTag>, G extends Graph<T>> GraphCodec<G, T> floatT(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<FloatTag>, G extends Graph<T>> GraphCodec<G, T> floatT(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(FloatTag.class, targetClass, instanceSupplier);
 	}
-	public static <T extends INBTSerializable<DoubleTag>, G extends Graph<T>> GraphCodec<G, T> doubleT(Class<T> targetClass, Supplier<T> instanceSupplier) {
+	public static <T extends IContextFreeNBTSerializable<DoubleTag>, G extends Graph<T>> GraphCodec<G, T> doubleT(Class<T> targetClass, Supplier<T> instanceSupplier) {
 		return GraphCodec.forINbtSerializable(DoubleTag.class, targetClass, instanceSupplier);
 	}
 

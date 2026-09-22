@@ -131,7 +131,7 @@ public class GenericUtils {
 	
 	public static double calculateHealthFromPotionEffect(MobEffectInstance effectInstance) {
 		int ticksPerTrigger;
-		String descId = effectInstance.getEffect().getDescriptionId();
+		String descId = effectInstance.getEffect()/*? neoforge {*//*.value()*//*?}*/.getDescriptionId();
 		String effectKey = descId.substring(descId.lastIndexOf('.') + 1);
 		switch (effectKey) {
 		case "instant_damage":

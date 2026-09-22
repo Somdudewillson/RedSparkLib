@@ -7,6 +7,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.RegistryObject;
 
 public interface BlockRegistryBuilderItemStep<T extends Block> {
-	public BlockRegistryBuilderItemStep<T> inCreativeTab(Consumer<RegistryObject<? extends Item>> tabRegistrar);
+	public BlockRegistryBuilderItemStep<T> inCreativeTab(Consumer<RegistryObject</*? neoforge {*//*Item, *//*?}*/? extends Item>> tabRegistrar);
 	public BlockRegistryBuilderFinishedStep<T> properties(Item.Properties properties);
 }

@@ -20,17 +20,17 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.INBTSerializable;
 import somdudewillson.redsparklib.common.utils.ExtNbtUtils;
+import somdudewillson.redsparklib.common.utils.IContextFreeNBTSerializable;
 import somdudewillson.redsparklib.common.utils.OptNbtUtils;
 import somdudewillson.redsparklib.common.utils.RegistryNbtUtils;
-import somdudewillson.redsparklib.serialization.codecs.NbtSerializableCodec;
+import somdudewillson.redsparklib.serialization.codecs.NbtContextFreeSerializableCodec;
 
 @NoArgsConstructor
 @Data
 @Setter(value = AccessLevel.PROTECTED)
-public class RecordedEntityInfo implements INBTSerializable<CompoundTag> {
-	public static final Codec<RecordedEntityInfo> CODEC = NbtSerializableCodec.compound(RecordedEntityInfo.class, RecordedEntityInfo::new);
+public class RecordedEntityInfo implements IContextFreeNBTSerializable<CompoundTag> {
+	public static final Codec<RecordedEntityInfo> CODEC = NbtContextFreeSerializableCodec.compound(RecordedEntityInfo.class, RecordedEntityInfo::new);
 	
 	@Nullable
 	protected Entity entity;
@@ -134,7 +134,7 @@ public class RecordedEntityInfo implements INBTSerializable<CompoundTag> {
 		root.putBoolean("is_living", living);
 		OptNbtUtils.put(root, "entity_type", tryGetEntityType().map(RegistryNbtUtils::serializeRegistryValue));
 		OptNbtUtils.put(root, "entity_size", tryGetEntitySize().map(ExtNbtUtils::serializeBoundingBox));
-		root.put("last_seen", Vec3.CODEC.encodeStart(NbtOps.INSTANCE, lastSeenPos).getOrThrow(false, s->{}));
+		root.put("last_seen", Vec3.CODEC.encodeStart(NbtOps.INSTANCE, lastSeenPos).getOrThrow(/*? < 1.21 {*/false, s->{}/*?}*/));
 		root.putLong("last_seen_time", lastSeenTime);
 		root.putLong("last_calc_update_time", calculatedDataLastUpdatedTime);
 		
@@ -148,7 +148,7 @@ public class RecordedEntityInfo implements INBTSerializable<CompoundTag> {
 		living = nbt.getBoolean("living");
 		entityType = OptNbtUtils.getCompound(nbt, "entity_type").flatMap(RegistryNbtUtils::tryDeserializeEntityType).orElse(null);
 		entitySize = OptNbtUtils.getList(nbt, "entity_size", Tag.TAG_DOUBLE).map(ExtNbtUtils::deserializeBoundingBox).orElse(null);
-		lastSeenPos = Vec3.CODEC.decode(NbtOps.INSTANCE, nbt.get("last_seen")).getOrThrow(false, s->{}).getFirst();
+		lastSeenPos = Vec3.CODEC.decode(NbtOps.INSTANCE, nbt.get("last_seen")).getOrThrow(/*? < 1.21 {*/false, s->{}/*?}*/).getFirst();
 		lastSeenTime = nbt.getLong("last_seen_time");
 		calculatedDataLastUpdatedTime = nbt.getLong("last_calc_update_time");
 	}

@@ -13,6 +13,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.NodeEvaluator;
+//? neoforge {
+/*import net.minecraft.world.level.pathfinder.PathfindingContext;
+*///?}
 
 public class ResumableTraversalScanner {
 	
@@ -53,7 +56,11 @@ public class ResumableTraversalScanner {
 		
 		val nodeEvaluator = nodeEvaluatorSupplier.get();
 		nodeEvaluator.prepare(region, mob);
+		//? neoforge {
+		/*startNode.type = nodeEvaluator.getPathType(new PathfindingContext(region, mob), startPos.getX(), startPos.getY(), startPos.getZ());
+		*///?} forge {
 		startNode.type = nodeEvaluator.getBlockPathType(region, startPos.getX(), startPos.getY(), startPos.getZ());
+		//?}
 		startNode.costMalus = startNode.type.getMalus();
 		
 		return new TraversalScannerState(

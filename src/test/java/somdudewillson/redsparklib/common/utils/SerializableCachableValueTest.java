@@ -14,11 +14,11 @@ public class SerializableCachableValueTest {
         AtomicInteger deserializeCount = new AtomicInteger(0);
 
         SerializableCachableValue<StringTag, String> cache = new SerializableCachableValue<>(
-            s -> {
+            (p, s) -> {
                 serializeCount.incrementAndGet();
                 return StringTag.valueOf(s);
             },
-            tag -> {
+            (p, tag) -> {
                 deserializeCount.incrementAndGet();
                 return tag.getAsString();
             }
@@ -33,19 +33,19 @@ public class SerializableCachableValueTest {
         assertEquals(0, deserializeCount.get());
 
         // Get value: should return "hello" directly without deserialization.
-        Optional<String> val = cache.tryGetValue();
+        Optional<String> val = cache.tryGetValue(null);
         assertTrue(val.isPresent());
         assertEquals("hello", val.get());
         assertEquals(0, deserializeCount.get());
 
         // Get serialized: should trigger serializer.
-        Optional<StringTag> tag = cache.tryGetSerialized();
+        Optional<StringTag> tag = cache.tryGetSerialized(null);
         assertTrue(tag.isPresent());
         assertEquals("hello", tag.get().getAsString());
         assertEquals(1, serializeCount.get());
 
         // Subsequent get serialized: should be cached, no extra serialization.
-        cache.tryGetSerialized();
+        cache.tryGetSerialized(null);
         assertEquals(1, serializeCount.get());
 
         // Now clear
@@ -57,13 +57,13 @@ public class SerializableCachableValueTest {
         assertTrue(cache.hasValue());
 
         // Get value: should trigger deserializer.
-        Optional<String> val2 = cache.tryGetValue();
+        Optional<String> val2 = cache.tryGetValue(null);
         assertTrue(val2.isPresent());
         assertEquals("world", val2.get());
         assertEquals(1, deserializeCount.get());
 
         // Subsequent get value: should be cached, no extra deserialization.
-        cache.tryGetValue();
+        cache.tryGetValue(null);
         assertEquals(1, deserializeCount.get());
     }
 }

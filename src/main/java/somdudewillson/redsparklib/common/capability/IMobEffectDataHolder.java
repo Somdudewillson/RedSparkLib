@@ -7,22 +7,24 @@ import javax.annotation.Nonnull;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.effect.MobEffect;
+//? forge {
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
-import net.minecraftforge.common.util.INBTSerializable;
+//?}
 import net.minecraftforge.registries.RegistryObject;
+import somdudewillson.redsparklib.common.utils.IContextFreeNBTSerializable;
 
-@AutoRegisterCapability
-public interface IMobEffectDataHolder extends INBTSerializable<ListTag> {
+/*? forge {*/@AutoRegisterCapability/*?}*/
+public interface IMobEffectDataHolder extends IContextFreeNBTSerializable<ListTag> {
 	
 	@Nonnull
-	CompoundTag getDataForMobEffect(RegistryObject<? extends MobEffect> mobEffect);
+	CompoundTag getDataForMobEffect(RegistryObject</*? neoforge {*//*MobEffect, *//*?}*/? extends MobEffect> mobEffect);
 	
-	boolean hasDataForMobEffect(RegistryObject<? extends MobEffect> mobEffect);
+	boolean hasDataForMobEffect(RegistryObject</*? neoforge {*//*MobEffect, *//*?}*/? extends MobEffect> mobEffect);
 	
-	void setDataForMobEffect(RegistryObject<? extends MobEffect> mobEffect, CompoundTag data);
+	void setDataForMobEffect(RegistryObject</*? neoforge {*//*MobEffect, *//*?}*/? extends MobEffect> mobEffect, CompoundTag data);
 
 	@Nonnull
-	CompoundTag getOrInitDataForMobEffect(RegistryObject<? extends MobEffect> mobEffect, Supplier<CompoundTag> dataSupplier);
+	CompoundTag getOrInitDataForMobEffect(RegistryObject</*? neoforge {*//*MobEffect, *//*?}*/? extends MobEffect> mobEffect, Supplier<CompoundTag> dataSupplier);
 	
 	void tick();
 }

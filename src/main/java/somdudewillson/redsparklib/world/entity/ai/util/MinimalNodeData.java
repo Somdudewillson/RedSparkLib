@@ -4,11 +4,16 @@ import com.mojang.serialization.Codec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+//? neoforge {
+/*import net.minecraft.world.level.pathfinder.PathType;
+*///?} forge {
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
+//?}
 import net.minecraft.world.level.pathfinder.Node;
 import somdudewillson.redsparklib.common.utils.ExtNbtUtils;
 import somdudewillson.redsparklib.serialization.codecs.DelegatingNbtWrappingCodec;
 
+//~ if neoforge BlockPathTypes -> PathType {
 public record MinimalNodeData(BlockPos pos, BlockPathTypes pathType, float malus) {
 	public static final Codec<MinimalNodeData> CODEC = DelegatingNbtWrappingCodec.compound(MinimalNodeData::serializeNBT, MinimalNodeData::deserializeNBT);
 	
@@ -34,3 +39,4 @@ public record MinimalNodeData(BlockPos pos, BlockPathTypes pathType, float malus
 	}
 	
 }
+//~}

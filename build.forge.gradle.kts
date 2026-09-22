@@ -86,6 +86,7 @@ tasks.named("createMinecraftArtifacts") {
 val generateEmptyTsrg = tasks.register("generateEmptyTsrg") {
 	val tsrgFile = layout.buildDirectory.file("mixin/${prop("mod.id")}.mixins.refmap.json.mappings.tsrg")
 	outputs.file(tsrgFile)
+	mustRunAfter("jar", "compileJava")
 	doLast {
 		val file = tsrgFile.get().asFile
 		if (!file.exists()) {

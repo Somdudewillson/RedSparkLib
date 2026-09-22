@@ -6,7 +6,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class BasicItemModelDatagenTask<R extends Item> extends ItemModelDatagenTask<R> {
 
-	public BasicItemModelDatagenTask(RegistryObject<R> targetRegistry) {
+	public BasicItemModelDatagenTask(RegistryObject</*? neoforge {*//*Item, *//*?}*/R> targetRegistry) {
 		super(targetRegistry);
 	}
 

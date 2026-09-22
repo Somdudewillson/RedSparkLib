@@ -31,11 +31,11 @@ public class BlockRegistryBuilder<T extends Block>
 	private final String registryName;
 	@NonNull
 	private final Supplier<T> blockSupplier;
-	private final RegistryObject<Block> blockRegistryObject;
-	private RegistryObject<Item> itemRegistryObject = null;
+	private final RegistryObject</*? neoforge {*//*Block, *//*?}*/Block> blockRegistryObject;
+	private RegistryObject</*? neoforge {*//*Item, *//*?}*/Item> itemRegistryObject = null;
 	
 	private final List<SimpleDatagenTask<?,?>> datagenTasks = new ArrayList<>();
-	private final List<Consumer<RegistryObject<? extends Item>>> tabRegistrars = new ArrayList<>();
+	private final List<Consumer<RegistryObject</*? neoforge {*//*Item, *//*?}*/? extends Item>>> tabRegistrars = new ArrayList<>();
 	
 	@RequiredArgsConstructor
 	public static class BlockRegistryBuilderFactory {
@@ -85,7 +85,7 @@ public class BlockRegistryBuilder<T extends Block>
 	
 	@SuppressWarnings("unchecked")
 	public DatagenTaskBuilder.BlockDatagenTaskBuilder.BlockDatagenTaskBuilderNoItem<BlockRegistryBuilderFinishedStep<T>, BlockRegistryBuilderItemStep<T>, T> blockDataBuilder() {
-		return DatagenTaskBuilder.BlockDatagenTaskBuilder.chained((RegistryObject<T>) blockRegistryObject, this::handleBlockDataBuildNoItem, this::handleBlockDataBuildItem);
+		return DatagenTaskBuilder.BlockDatagenTaskBuilder.chained((RegistryObject</*? neoforge {*//*Block, *//*?}*/T>) blockRegistryObject, this::handleBlockDataBuildNoItem, this::handleBlockDataBuildItem);
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class BlockRegistryBuilder<T extends Block>
 	}
 
 	@Override
-	public BlockRegistryBuilderItemStep<T> inCreativeTab(Consumer<RegistryObject<? extends Item>> tabRegistrar) {
+	public BlockRegistryBuilderItemStep<T> inCreativeTab(Consumer<RegistryObject</*? neoforge {*//*Item, *//*?}*/? extends Item>> tabRegistrar) {
 		tabRegistrars.add(tabRegistrar);
 		return this;
 	}
@@ -115,7 +115,7 @@ public class BlockRegistryBuilder<T extends Block>
 		return this;
 	}
 	
-	public RegistryObject<Block> build() {
+	public RegistryObject</*? neoforge {*//*Block, *//*?}*/Block> build() {
 		RedSparkLibSimpleDatagenManager.queueDatagen(modid, datagenTasks);
 		return blockRegistryObject;
 	}

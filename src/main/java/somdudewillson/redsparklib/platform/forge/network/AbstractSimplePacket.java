@@ -1,5 +1,6 @@
-package somdudewillson.redsparklib.network;
+package somdudewillson.redsparklib.platform.forge.network;
 
+//? forge {
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -22,3 +23,4 @@ public abstract class AbstractSimplePacket {
 		return (FriendlyByteBuf byteBuffer) -> AbstractSimplePacket.createFromByteBuffer(supplier, byteBuffer);
 	}
 }
+//?}

@@ -17,13 +17,13 @@ import com.google.common.graph.ValueGraphBuilder;
 import com.mojang.serialization.Codec;
 
 import lombok.val;
-import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.common.util.INBTSerializable;
 import somdudewillson.redsparklib.common.utils.ExtNbtUtils;
+import somdudewillson.redsparklib.common.utils.IContextFreeNBTSerializable;
+import somdudewillson.redsparklib.platform.PlatformSpecificUtils;
 
 public class ValueGraphCodec<A extends ValueGraph<N, W>, N, W> extends BaseGraphCodec<A, N> {
     protected final Codec<W> edgeValueCodec;
@@ -33,14 +33,20 @@ public class ValueGraphCodec<A extends ValueGraph<N, W>, N, W> extends BaseGraph
 		this.edgeValueCodec = edgeValueCodec;
 	}
 
-	public static <T extends INBTSerializable<K>, T2 extends INBTSerializable<K2>, K extends Tag, K2 extends Tag, G extends ValueGraph<T, T2>> ValueGraphCodec<G, T, T2> forINbtSerializable(Class<K> elementTagClass, Class<T> elementClass, Supplier<T> elementInstanceSupplier, Class<K2> edgeValueTagClass, Class<T2> edgeValueClass, Supplier<T2> edgeValueInstanceSupplier) {
-    	return new ValueGraphCodec<G, T, T2>(new NbtSerializableCodec<>(elementTagClass, elementClass, elementInstanceSupplier), new NbtSerializableCodec<>(edgeValueTagClass, edgeValueClass, edgeValueInstanceSupplier));
+	public static <T extends IContextFreeNBTSerializable<K>, T2 extends IContextFreeNBTSerializable<K2>, K extends Tag, K2 extends Tag, G extends ValueGraph<T, T2>> ValueGraphCodec<G, T, T2> forINbtSerializable(Class<K> elementTagClass, Class<T> elementClass, Supplier<T> elementInstanceSupplier, Class<K2> edgeValueTagClass, Class<T2> edgeValueClass, Supplier<T2> edgeValueInstanceSupplier) {
+    	return new ValueGraphCodec<G, T, T2>(
+    			new NbtContextFreeSerializableCodec<>(elementTagClass, elementClass, elementInstanceSupplier), 
+    			new NbtContextFreeSerializableCodec<>(edgeValueTagClass, edgeValueClass, edgeValueInstanceSupplier));
     }
-	public static <T extends INBTSerializable<K>, T2, K extends Tag, G extends ValueGraph<T, T2>> ValueGraphCodec<G, T, T2> forINbtSerializableNodes(Class<K> elementTagClass, Class<T> elementClass, Supplier<T> elementInstanceSupplier, Codec<T2> edgeValueCodec) {
-    	return new ValueGraphCodec<G, T, T2>(new NbtSerializableCodec<>(elementTagClass, elementClass, elementInstanceSupplier), edgeValueCodec);
+	public static <T extends IContextFreeNBTSerializable<K>, T2, K extends Tag, G extends ValueGraph<T, T2>> ValueGraphCodec<G, T, T2> forINbtSerializableNodes(Class<K> elementTagClass, Class<T> elementClass, Supplier<T> elementInstanceSupplier, Codec<T2> edgeValueCodec) {
+    	return new ValueGraphCodec<G, T, T2>(
+    			new NbtContextFreeSerializableCodec<>(elementTagClass, elementClass, elementInstanceSupplier), 
+    			edgeValueCodec);
     }
-	public static <T, T2 extends INBTSerializable<K2>, K2 extends Tag, G extends ValueGraph<T, T2>> ValueGraphCodec<G, T, T2> forINbtSerializableEdgeValues(Codec<T> elementCodec, Class<K2> edgeValueTagClass, Class<T2> valueClass, Supplier<T2> instanceSupplier) {
-    	return new ValueGraphCodec<G, T, T2>(elementCodec, new NbtSerializableCodec<>(edgeValueTagClass, valueClass, instanceSupplier));
+	public static <T, T2 extends IContextFreeNBTSerializable<K2>, K2 extends Tag, G extends ValueGraph<T, T2>> ValueGraphCodec<G, T, T2> forINbtSerializableEdgeValues(Codec<T> elementCodec, Class<K2> edgeValueTagClass, Class<T2> valueClass, Supplier<T2> instanceSupplier) {
+    	return new ValueGraphCodec<G, T, T2>(
+    			elementCodec, 
+    			new NbtContextFreeSerializableCodec<>(edgeValueTagClass, valueClass, instanceSupplier));
     }
 
 	@Override
@@ -65,7 +71,7 @@ public class ValueGraphCodec<A extends ValueGraph<N, W>, N, W> extends BaseGraph
 					CompoundTag root = new CompoundTag();
 					
 					root.putInt("edgeId", edgeIdMap.get(p.getLeft()));
-					root.put("value", edgeValueCodec.encodeStart(NbtOps.INSTANCE, p.getRight()).getOrThrow(false, Util.prefix("Error serializing edge value for edge "+edgeIdMap.get(p.getLeft())+": ", LOGGER::error)));
+					root.put("value", PlatformSpecificUtils.getOrThrowDataResult(edgeValueCodec.encodeStart(NbtOps.INSTANCE, p.getRight()), "Error serializing edge value for edge "+edgeIdMap.get(p.getLeft())+": ", LOGGER::error));
 					
 					return root;
 				});
@@ -86,7 +92,7 @@ public class ValueGraphCodec<A extends ValueGraph<N, W>, N, W> extends BaseGraph
 		Map<EndpointPair<N>, W> edgeValueMap = ExtNbtUtils.deserializeToStream((ListTag) extraNbt, t->(CompoundTag)t)
 				.collect(Collectors.toMap(
 						t->edgeIdMap.get(t.getInt("edgeId")), 
-						t->edgeValueCodec.decode(NbtOps.INSTANCE, t.get("value")).getOrThrow(false, Util.prefix("Error deserializing edge value for edge "+t.getInt("edgeId")+": ", LOGGER::error)).getFirst()));
+						t->PlatformSpecificUtils.getOrThrowDataResult(edgeValueCodec.decode(NbtOps.INSTANCE, t.get("value")), "Error deserializing edge value for edge "+t.getInt("edgeId")+": ", LOGGER::error).getFirst()));
 		
 		A result;
 		if (mutable) {

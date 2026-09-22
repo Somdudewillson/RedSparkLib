@@ -1,5 +1,6 @@
-package somdudewillson.redsparklib.common.utils;
+package somdudewillson.redsparklib.platform.forge.common.utils;
 
+//? forge {
 import java.util.stream.IntStream;
 
 import org.jetbrains.annotations.NotNull;
@@ -7,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import lombok.val;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 public interface ItemHandlerContainer extends Container, ICapabilityProvider {
 
@@ -109,3 +110,4 @@ public interface ItemHandlerContainer extends Container, ICapabilityProvider {
 	}
 
 }
+//?}

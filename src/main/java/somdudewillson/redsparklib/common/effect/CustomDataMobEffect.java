@@ -1,6 +1,5 @@
 package somdudewillson.redsparklib.common.effect;
 
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -16,15 +15,29 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import somdudewillson.redsparklib.common.RedSparkLibCapabilities;
 import somdudewillson.redsparklib.common.capability.IMobEffectDataHolder;
+import somdudewillson.redsparklib.common.utils.ExtNbtUtils;
+import somdudewillson.redsparklib.common.utils.TagDeserializerFunction;
+import somdudewillson.redsparklib.common.utils.TagSerializerFunction;
+import somdudewillson.redsparklib.platform.PlatformRegistryInstances;
+//? neoforge {
+/*import net.minecraft.core.HolderLookup;
+*///?}
 
 public abstract class CustomDataMobEffect<T> extends MobEffect {
-	protected final Supplier<RegistryObject<CustomDataMobEffect<T>>> registryFetcher = Suppliers.memoize(()->{
-		return RegistryObject.create(ForgeRegistries.MOB_EFFECTS.getKey(this), ForgeRegistries.MOB_EFFECTS);
+	//? neoforge {
+	/*@SuppressWarnings("unchecked")
+	protected final Supplier<RegistryObject<MobEffect, CustomDataMobEffect<T>>> registryFetcher = Suppliers.memoize(()->{
+		return (RegistryObject<MobEffect, CustomDataMobEffect<T>>) (RegistryObject<MobEffect, ? extends MobEffect>) RegistryObject
+				.create(PlatformRegistryInstances.MOB_EFFECTS.key(), PlatformRegistryInstances.MOB_EFFECTS.getKey(this));
 	});
+	*///?} forge {
+	protected final Supplier<RegistryObject<CustomDataMobEffect<T>>> registryFetcher = Suppliers.memoize(()->{
+		return RegistryObject.create(PlatformRegistryInstances.MOB_EFFECTS.getKey(this), PlatformRegistryInstances.MOB_EFFECTS);
+	});
+	//?}
 
 	protected CustomDataMobEffect(MobEffectCategory pCategory, int pColor) {
 		super(pCategory, pColor);
@@ -32,14 +45,19 @@ public abstract class CustomDataMobEffect<T> extends MobEffect {
 	
 	public abstract T getDefaultDataState();
 	
-	public abstract CompoundTag serializeData(T data);
-	public abstract void deserializeData(T data, CompoundTag tag);
+	public abstract CompoundTag serializeData(T data/*? neoforge{*//*, HolderLookup.Provider provider*//*?}*/);
+	public abstract void deserializeData(T data, /*? neoforge{*//*HolderLookup.Provider provider,*//*?}*/ CompoundTag tag);
 	
 	protected MobEffectCustomDataContextManager<T> getCustomDataContextManager(LivingEntity pLivingEntity) {
-		return new MobEffectCustomDataContextManager<>(pLivingEntity, registryFetcher.get(), this::getDefaultDataState, this::serializeData, this::deserializeData);
+		return new MobEffectCustomDataContextManager<>(
+				pLivingEntity, 
+				registryFetcher.get(), 
+				this::getDefaultDataState, 
+				this::serializeData, 
+				this::deserializeData);
 	}
 	protected static class MobEffectCustomDataContextManager<T> implements AutoCloseable {
-		protected final RegistryObject<? extends CustomDataMobEffect<T>> mobEffectRegistry;
+		protected final RegistryObject</*? neoforge {*//*MobEffect, *//*?}*/? extends CustomDataMobEffect<T>> mobEffectRegistry;
 		protected final Function<T, CompoundTag> dataSerializer;
 		protected final IMobEffectDataHolder potionDataCap;
 		protected final CompoundTag existingDataTag;
@@ -47,16 +65,27 @@ public abstract class CustomDataMobEffect<T> extends MobEffect {
 		@Setter
 		protected T extraData;
 		
-		public MobEffectCustomDataContextManager(LivingEntity pLivingEntity, RegistryObject<? extends CustomDataMobEffect<T>> pMobEffectRegistry,
-				Supplier<T> defaultDataSupplier, Function<T, CompoundTag> pDataSerializer, BiConsumer<T, CompoundTag> dataDeserializer) {	
+		public MobEffectCustomDataContextManager(LivingEntity pLivingEntity, 
+				RegistryObject</*? neoforge {*//*MobEffect, *//*?}*/? extends CustomDataMobEffect<T>> pMobEffectRegistry,
+				Supplier<T> defaultDataSupplier, 
+				TagSerializerFunction<T, CompoundTag> pDataSerializer, 
+				TagDeserializerFunction<T, CompoundTag> dataDeserializer) {
+			//? neoforge {
+			/*HolderLookup.Provider provider = pLivingEntity.registryAccess();
+			*///?}			
 			mobEffectRegistry = pMobEffectRegistry;
-			dataSerializer = pDataSerializer;
+			dataSerializer = ExtNbtUtils.makeInlineStubbedNbtSerializer(/*? neoforge {*//*provider,*//*?}*/ pDataSerializer);
 					
-			potionDataCap = pLivingEntity.getCapability(RedSparkLibCapabilities.MOB_EFFECT_DATA_HOLDER).orElse(null);
-			if (potionDataCap == null) { throw new IllegalStateException(String.format("Entity lacks %s capability!", RedSparkLibCapabilities.MOB_EFFECT_DATA_HOLDER.getName())); }
+			potionDataCap = pLivingEntity.getCapability(RedSparkLibCapabilities.MOB_EFFECT_DATA_HOLDER)/*? forge {*/.orElse(null)/*?}*/;
+			if (potionDataCap == null) {
+				throw new IllegalStateException(String.format(
+						"Entity lacks %s capability!", 
+						RedSparkLibCapabilities.MOB_EFFECT_DATA_HOLDER/*? neoforge {*//*.name()*//*?} forge {*/.getName()/*?}*/
+						));
+			}
 			existingDataTag = potionDataCap.getOrInitDataForMobEffect(mobEffectRegistry, ()->dataSerializer.apply(defaultDataSupplier.get()));
 			extraData = defaultDataSupplier.get();
-			dataDeserializer.accept(extraData, existingDataTag);
+			dataDeserializer.deserialize(extraData, /*? neoforge {*//*provider,*//*?}*/ existingDataTag);
 		}
 
 		@Override
@@ -70,10 +99,13 @@ public abstract class CustomDataMobEffect<T> extends MobEffect {
 	}
 	
 	@Override
-	public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
+	public /*? neoforge {*//*boolean*//*?} forge {*/void/*?}*/ applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
 		try (MobEffectCustomDataContextManager<T> ctx = getCustomDataContextManager(pLivingEntity)) {
 			ctx.setExtraData( applyEffectTick(pLivingEntity, pAmplifier, ctx.getExtraData()) );
 		}
+		//? neoforge {
+		/*return true;
+		*///?}
 	}
 	public T applyEffectTick(LivingEntity pLivingEntity, int pAmplifier, T extraData) { return extraData; }
 

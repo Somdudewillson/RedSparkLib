@@ -1,5 +1,6 @@
-package somdudewillson.redsparklib.network.clientbound;
+package somdudewillson.redsparklib.platform.forge.network.clientbound;
 
+//? forge {
 import java.util.function.Supplier;
 
 import lombok.AccessLevel;
@@ -15,8 +16,8 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent.Context;
 import somdudewillson.redsparklib.common.RedSparkLibCapabilities;
 import somdudewillson.redsparklib.common.capability.IMobEffectDataHolder;
-import somdudewillson.redsparklib.network.AbstractSimplePacket;
-import somdudewillson.redsparklib.network.SimplePacketHandler;
+import somdudewillson.redsparklib.platform.forge.network.AbstractSimplePacket;
+import somdudewillson.redsparklib.platform.forge.network.SimplePacketHandler;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MobEffectCustomDataPacket extends AbstractSimplePacket {
@@ -74,3 +75,4 @@ public class MobEffectCustomDataPacket extends AbstractSimplePacket {
 	}
 
 }
+//?}

@@ -28,12 +28,12 @@ public class ItemRegistryBuilder<T extends Item, R> implements ItemRegistryBuild
 	@NonNull
 	private final Function<Properties, T> itemFactory;
     private Properties properties = null;
-	private RegistryObject<Item> itemRegistryObject = null;
+	private RegistryObject</*? neoforge {*//*Item, *//*?}*/Item> itemRegistryObject = null;
 	
-    protected final BiFunction<ItemRegistryBuilder<T,R>, RegistryObject<Item>, R> finisher;
+    protected final BiFunction<ItemRegistryBuilder<T,R>, RegistryObject</*? neoforge {*//*Item, *//*?}*/Item>, R> finisher;
 	
 	private final List<SimpleDatagenTask<?,?>> datagenTasks = new ArrayList<>();
-	private final List<Consumer<RegistryObject<? extends Item>>> tabRegistrars = new ArrayList<>();
+	private final List<Consumer<RegistryObject</*? neoforge {*//*Item, *//*?}*/? extends Item>>> tabRegistrars = new ArrayList<>();
 	
 	@RequiredArgsConstructor
 	public static class ItemRegistryBuilderFactory {
@@ -42,23 +42,23 @@ public class ItemRegistryBuilder<T extends Item, R> implements ItemRegistryBuild
 		@NonNull
 		private final DeferredRegister<Item> itemRegistry;
 
-		public <B extends Item> ItemRegistryBuilderPropertiesStep<B,RegistryObject<Item>> registerItem(String registryName, Function<Properties, B> itemFactory) {
+		public <B extends Item> ItemRegistryBuilderPropertiesStep<B,RegistryObject</*? neoforge {*//*Item, *//*?}*/Item>> registerItem(String registryName, Function<Properties, B> itemFactory) {
 			return new ItemRegistryBuilder<>(modid, itemRegistry, registryName, itemFactory, ItemRegistryBuilder::identityFinisher);
 		}
-		public ItemRegistryBuilderPropertiesStep<Item, RegistryObject<Item>> registerSimpleItem(String registryName) {
+		public ItemRegistryBuilderPropertiesStep<Item, RegistryObject</*? neoforge {*//*Item, *//*?}*/Item>> registerSimpleItem(String registryName) {
 			return new ItemRegistryBuilder<>(modid, itemRegistry, registryName, Item::new, ItemRegistryBuilder::identityFinisher);
 		}
-		public <B extends Item> ItemRegistryBuilderModelStep<B,RegistryObject<Item>> registerItem(String registryName, Supplier<B> itemSupplier) {
+		public <B extends Item> ItemRegistryBuilderModelStep<B,RegistryObject</*? neoforge {*//*Item, *//*?}*/Item>> registerItem(String registryName, Supplier<B> itemSupplier) {
 			return new ItemRegistryBuilder<>(modid, itemRegistry, registryName, p->itemSupplier.get(), ItemRegistryBuilder::identityFinisher);
 		}
 	}
 	
-	protected static <Ti extends Item> RegistryObject<Item> identityFinisher(ItemRegistryBuilder<Ti, RegistryObject<Item>> builder, RegistryObject<Item> itemResult) {
+	protected static <Ti extends Item> RegistryObject</*? neoforge {*//*Item, *//*?}*/Item> identityFinisher(ItemRegistryBuilder<Ti, RegistryObject</*? neoforge {*//*Item, *//*?}*/Item>> builder, RegistryObject</*? neoforge {*//*Item, *//*?}*/Item> itemResult) {
 		return itemResult;
 	}
 	
 	protected ItemRegistryBuilder(@NonNull String modid, @NonNull DeferredRegister<Item> itemRegistry, @NonNull String registryName, 
-			@NonNull Function<Properties, T> itemFactory, @NonNull BiFunction<ItemRegistryBuilder<T,R>, RegistryObject<Item>, R> finisher) {
+			@NonNull Function<Properties, T> itemFactory, @NonNull BiFunction<ItemRegistryBuilder<T,R>, RegistryObject</*? neoforge {*//*Item, *//*?}*/Item>, R> finisher) {
 		this.modid = modid;
 		this.itemRegistry = itemRegistry;
 		this.registryName = registryName;
@@ -96,7 +96,7 @@ public class ItemRegistryBuilder<T extends Item, R> implements ItemRegistryBuild
 	@Override
 	public ItemDatagenTaskBuilder<ItemRegistryBuilderFinishedStep<T, R>, T> itemModelBuilder() {
 		performItemRegistry();
-		return ItemDatagenTaskBuilder.chained((RegistryObject<T>) itemRegistryObject, this::handleItemDataBuild);
+		return ItemDatagenTaskBuilder.chained((RegistryObject</*? neoforge {*//*Item, *//*?}*/T>) itemRegistryObject, this::handleItemDataBuild);
 	}
 	@Override
 	public ItemRegistryBuilderFinishedStep<T, R> simpleItem() {
@@ -106,7 +106,7 @@ public class ItemRegistryBuilder<T extends Item, R> implements ItemRegistryBuild
 
 
 	@Override
-	public ItemRegistryBuilderFinishedStep<T, R> inCreativeTab(Consumer<RegistryObject<? extends Item>> tabRegistrar) {
+	public ItemRegistryBuilderFinishedStep<T, R> inCreativeTab(Consumer<RegistryObject</*? neoforge {*//*Item, *//*?}*/? extends Item>> tabRegistrar) {
 		tabRegistrars.add(tabRegistrar);
 		return this;
 	}

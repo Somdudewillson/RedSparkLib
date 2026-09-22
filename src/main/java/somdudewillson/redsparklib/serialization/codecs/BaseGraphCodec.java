@@ -27,6 +27,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import somdudewillson.redsparklib.common.utils.ExtNbtUtils;
 import somdudewillson.redsparklib.common.utils.OptNbtUtils;
+import somdudewillson.redsparklib.platform.PlatformSpecificUtils;
 
 // This is bad as we do not have proper type bounding
 // There isn't really another way to do this though, as the shared superinterface BaseGraph isn't visible to us
@@ -49,7 +50,10 @@ public abstract class BaseGraphCodec<A, N> extends NbtWrappingCodec<A, CompoundT
 		root.putBoolean("directed", isDirected(value));
 		
 		root.put("nodes", 
-				ExtNbtUtils.serializeStream( getNodes(value).stream(), n->elementCodec.encodeStart(NbtOps.INSTANCE, n).getOrThrow(false, Util.prefix("Error serializing graph node: ", LOGGER::error)) )
+				ExtNbtUtils.<N, Tag>serializeStream( 
+						getNodes(value).stream(), 
+						n->PlatformSpecificUtils.getOrThrowDataResult(elementCodec.encodeStart(NbtOps.INSTANCE, n), "Error serializing graph node: ", LOGGER::error)
+					)
 				);
 		HashMap<N, Integer> nodeIdMap = new HashMap<>();
 		for (N node : getNodes(value)) {
@@ -78,9 +82,19 @@ public abstract class BaseGraphCodec<A, N> extends NbtWrappingCodec<A, CompoundT
 	protected A decodeFromTag(CompoundTag nbt) {
 		val directed = nbt.getBoolean("directed");
 		
-		val nodeList = ExtNbtUtils.deserializeToStream(
-				(ListTag)nbt.get("nodes"), 
-				t->elementCodec.decode(NbtOps.INSTANCE, t).getOrThrow(false, Util.prefix("Error deserializing graph node: ", LOGGER::error)).getFirst())
+		val nodeList = ExtNbtUtils.<ListTag, N>deserializeToStream(
+					(ListTag)nbt.get("nodes"), 
+					t->elementCodec.decode(NbtOps.INSTANCE, t)
+						//? < 1.21 {
+						.getOrThrow(false, Util.prefix("Error deserializing graph node: ", LOGGER::error))
+						//?} else {
+						/*.getOrThrow(s->{
+						 	Util.prefix("Error deserializing graph node: ", LOGGER::error).accept(s);
+						 	return new RuntimeException(s);
+						 })
+						 *///?}
+						.getFirst()
+				)
 			.toList();
 		HashBiMap<Integer, N> nodeIdMap = HashBiMap.create();
 		for (N node : nodeList) {

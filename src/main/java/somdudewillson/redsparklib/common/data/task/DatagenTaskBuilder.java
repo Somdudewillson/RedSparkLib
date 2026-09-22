@@ -50,7 +50,7 @@ public abstract class DatagenTaskBuilder<T, S extends DatagenTaskBuilder<T,S>> {
 	@RequiredArgsConstructor
 	public static abstract class BlockDatagenTaskBuilder<T, Ta, Tb, R extends Block, S extends BlockDatagenTaskBuilder<T,Ta,Tb,R,S>> extends DatagenTaskBuilder<T, S> {
 
-		protected final RegistryObject<R> block;
+		protected final RegistryObject</*? neoforge {*//*Block, *//*?}*/R> block;
 		protected final BiFunction<BlockDatagenTaskBuilderNoItem<Ta, Tb, R>, List<SimpleDatagenTask<?,?>>, Ta> finisherA;
 		protected final BiFunction<BlockDatagenTaskBuilderWithItem<Ta, Tb, R>, List<SimpleDatagenTask<?,?>>, Tb> finisherB;
 		protected final Set<TagKey<Block>> blockTags = new HashSet<>();
@@ -58,7 +58,7 @@ public abstract class DatagenTaskBuilder<T, S extends DatagenTaskBuilder<T,S>> {
 		public static class BlockDatagenTaskBuilderNoItem<Ta, Tb, R extends Block> extends BlockDatagenTaskBuilder<Ta, Ta, Tb, R, BlockDatagenTaskBuilderNoItem<Ta,Tb,R>> {
 			
 			protected BlockDatagenTaskBuilderNoItem(
-					RegistryObject<R> block,
+					RegistryObject</*? neoforge {*//*Block, *//*?}*/R> block,
 					BiFunction<BlockDatagenTaskBuilderNoItem<Ta, Tb, R>, List<SimpleDatagenTask<?, ?>>, Ta> finisherA,
 					BiFunction<BlockDatagenTaskBuilderWithItem<Ta, Tb, R>, List<SimpleDatagenTask<?, ?>>, Tb> finisherB) {
 				super(block, finisherA, finisherB);
@@ -114,7 +114,7 @@ public abstract class DatagenTaskBuilder<T, S extends DatagenTaskBuilder<T,S>> {
 			protected final Set<TagKey<Item>> itemTags = new HashSet<>();
 			
 			protected BlockDatagenTaskBuilderWithItem(
-					RegistryObject<R> block,
+					RegistryObject</*? neoforge {*//*Block, *//*?}*/R> block,
 					BiFunction<BlockDatagenTaskBuilderNoItem<Ta, Tb, R>, List<SimpleDatagenTask<?, ?>>, Ta> finisherA,
 					BiFunction<BlockDatagenTaskBuilderWithItem<Ta, Tb, R>, List<SimpleDatagenTask<?, ?>>, Tb> finisherB) {
 				super(block, finisherA, finisherB);
@@ -181,17 +181,17 @@ public abstract class DatagenTaskBuilder<T, S extends DatagenTaskBuilder<T,S>> {
 				}
 				
 				if (!itemTags.isEmpty()) {
-					tasks.add(SimpleTagDatagenTask.blockItemTags((RegistryObject<Block>) block, itemTags));
+					tasks.add(SimpleTagDatagenTask.blockItemTags((RegistryObject</*? neoforge {*//*Block, *//*?}*/Block>) block, itemTags));
 				}
 				
 				return finish(tasks);
 			}
 		}
 		
-		public static <iR extends Block> BlockDatagenTaskBuilderNoItem<List<SimpleDatagenTask<?,?>>, List<SimpleDatagenTask<?,?>>, iR> unchained(RegistryObject<iR> block) {
+		public static <iR extends Block> BlockDatagenTaskBuilderNoItem<List<SimpleDatagenTask<?,?>>, List<SimpleDatagenTask<?,?>>, iR> unchained(RegistryObject</*? neoforge {*//*Block, *//*?}*/iR> block) {
 			return new BlockDatagenTaskBuilderNoItem<>(block, DatagenTaskBuilder::identityFinisher, DatagenTaskBuilder::identityFinisher);
 		}
-		public static <iTa, iTb, iR extends Block> BlockDatagenTaskBuilderNoItem<iTa, iTb, iR> chained(RegistryObject<iR> block, 
+		public static <iTa, iTb, iR extends Block> BlockDatagenTaskBuilderNoItem<iTa, iTb, iR> chained(RegistryObject</*? neoforge {*//*Block, *//*?}*/iR> block, 
 				BiFunction<BlockDatagenTaskBuilderNoItem<iTa, iTb, iR>, List<SimpleDatagenTask<?,?>>, iTa> finisherA,
 				BiFunction<BlockDatagenTaskBuilderWithItem<iTa, iTb, iR>, List<SimpleDatagenTask<?,?>>, iTb> finisherB) {
 			return new BlockDatagenTaskBuilderNoItem<>(block, finisherA, finisherB);
@@ -209,7 +209,7 @@ public abstract class DatagenTaskBuilder<T, S extends DatagenTaskBuilder<T,S>> {
 			tasks.add(new BasicBlockModelDatagenTask<>(block));
 			
 			if (!blockTags.isEmpty()) {
-				tasks.add(SimpleTagDatagenTask.blockTags((RegistryObject<Block>) block, blockTags));
+				tasks.add(SimpleTagDatagenTask.blockTags((RegistryObject</*? neoforge {*//*Block, *//*?}*/Block>) block, blockTags));
 			}
 			
 			return tasks;
@@ -227,19 +227,19 @@ public abstract class DatagenTaskBuilder<T, S extends DatagenTaskBuilder<T,S>> {
 			BLOCK_FLAT;
 		}
 
-		private final RegistryObject<R> item;
+		private final RegistryObject</*? neoforge {*//*Item, *//*?}*/R> item;
 		private ItemModelType itemModelType = ItemModelType.SIMPLE;
 		private final Set<TagKey<Item>> itemTags = new HashSet<>();
 		private final List<OverridePredicateData> overridePredicates = new ArrayList<>();
 		
-		public ItemDatagenTaskBuilder(RegistryObject<R> item, BiFunction<ItemDatagenTaskBuilder<T,R>, List<SimpleDatagenTask<?, ?>>, T> finisher) {
+		public ItemDatagenTaskBuilder(RegistryObject</*? neoforge {*//*Item, *//*?}*/R> item, BiFunction<ItemDatagenTaskBuilder<T,R>, List<SimpleDatagenTask<?, ?>>, T> finisher) {
 			super(finisher);
 			this.item = item;
 		}
-		public static <iR extends Item> ItemDatagenTaskBuilder<List<SimpleDatagenTask<?,?>>, iR> unchained(RegistryObject<iR> item) {
+		public static <iR extends Item> ItemDatagenTaskBuilder<List<SimpleDatagenTask<?,?>>, iR> unchained(RegistryObject</*? neoforge {*//*Item, *//*?}*/iR> item) {
 			return new ItemDatagenTaskBuilder<>(item, DatagenTaskBuilder::identityFinisher);
 		}
-		public static <iT, iR extends Item> ItemDatagenTaskBuilder<iT, iR> chained(RegistryObject<iR> item, 
+		public static <iT, iR extends Item> ItemDatagenTaskBuilder<iT, iR> chained(RegistryObject</*? neoforge {*//*Item, *//*?}*/iR> item, 
 				BiFunction<ItemDatagenTaskBuilder<iT,iR>, List<SimpleDatagenTask<?, ?>>, iT> finisher) {
 			return new ItemDatagenTaskBuilder<>(item, finisher);
 		}
@@ -255,7 +255,7 @@ public abstract class DatagenTaskBuilder<T, S extends DatagenTaskBuilder<T,S>> {
 			List<SimpleDatagenTask<?, ?>> tasks = new ArrayList<>();
 
 			if (!itemTags.isEmpty()) {
-				tasks.add(SimpleTagDatagenTask.itemTags((RegistryObject<Item>) item, itemTags));
+				tasks.add(SimpleTagDatagenTask.itemTags((RegistryObject</*? neoforge {*//*Item, *//*?}*/Item>) item, itemTags));
 			}
 			
 			if (overridePredicates.isEmpty()) {

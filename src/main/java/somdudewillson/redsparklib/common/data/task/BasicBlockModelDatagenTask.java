@@ -6,7 +6,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class BasicBlockModelDatagenTask<R extends Block> extends SimpleDatagenTask<R, BlockStateProvider> {
 
-	public BasicBlockModelDatagenTask(RegistryObject<R> targetRegistry) {
+	public BasicBlockModelDatagenTask(RegistryObject</*? neoforge {*//*Block, *//*?}*/R> targetRegistry) {
 		super(targetRegistry);
 	}
 
