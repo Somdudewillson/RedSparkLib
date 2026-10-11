@@ -1,7 +1,7 @@
 mod.id = "redsparklib"
 mod.name = "RedSparkLib"
 mod.group = "com.github.somdudewillson"
-mod.version = "1.1.0"
+mod.version = "1.1.1"
 mod.channel_tag = ""
 mod.description = "A helpful library mod for my mods."
 mod.authors = ["Somdudewillson"]
@@ -25,7 +25,7 @@ url = "https://github.com/ghost"
 
 [forge."1.20.1"]
 deps.minecraft = "1.20.1"
-deps.forge = "47.3.0"
+deps.forge = "47.4.10"
 
 [neoforge]
 
