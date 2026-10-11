@@ -15,12 +15,18 @@ fun Project.configureMavenPublishing(ctx: Context) {
 	env("PUB_MAVEN_CENTRAL_PASSWORD")?.let { extensions.extraProperties["mavenCentralPassword"] = it }
 
 	extensions.configure<MavenPublishBaseExtension>("mavenPublishing") {
+		configureBasedOnAppliedPlugins(
+			javadocJar = false
+		)
+
 		if (envTrue("PUB_MAVEN_CENTRAL_ENABLE")) {
 			if (!ctx.isSnapshot || envTrue("PUB_MAVEN_CENTRAL_SNAPSHOTS")) {
 				publishToMavenCentral()
 			}
 		}
-		signAllPublications()
+		if (env("PUB_SIGNING_KEY") != null) {
+			signAllPublications()
+		}
 
 		coordinates(ctx.modGroup, ctx.modId, version as String)
 		pom {
@@ -36,13 +42,25 @@ fun Project.configureMavenPublishing(ctx: Context) {
 				}
 			}
 			developers {
-				project.sc.properties.raw("mod.pom.developers").asList().forEach { devNode ->
+				val devNodes = runCatching {
+					project.sc.properties.raw("mod", "pom", "developers").asList()
+				}.getOrElse { emptyList() }
 
-					val dev = devNode.asMap()
-					developer {
-						id.set(dev["id"]?.toString())
-						name.set(dev["name"]?.toString())
-						url.set(dev["url"]?.toString())
+				if (devNodes.isNotEmpty()) {
+					devNodes.forEach { devNode ->
+						val dev = devNode.asMap()
+						developer {
+							id.set(dev["id"]?.toString())
+							name.set(dev["name"]?.toString())
+							url.set(dev["url"]?.toString())
+						}
+					}
+				} else {
+					ctx.authors.forEach { author ->
+						developer {
+							id.set(author.lowercase())
+							name.set(author)
+						}
 					}
 				}
 			}
