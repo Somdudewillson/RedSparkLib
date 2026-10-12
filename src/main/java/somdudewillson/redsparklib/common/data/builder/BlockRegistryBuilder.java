@@ -63,7 +63,7 @@ public class BlockRegistryBuilder<T extends Block>
 	
 
 	protected BlockRegistryBuilder<T> addDatagenTasks(Collection<SimpleDatagenTask<?,?>> newTasks) {
-		datagenTasks.addAll(datagenTasks);
+		datagenTasks.addAll(newTasks);
 		return this;
 	}
 	protected BlockRegistryBuilder<T> addDatagenTask(SimpleDatagenTask<?,?> newTask) {

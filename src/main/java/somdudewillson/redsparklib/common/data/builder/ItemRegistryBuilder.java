@@ -68,7 +68,7 @@ public class ItemRegistryBuilder<T extends Item, R> implements ItemRegistryBuild
 	
 
 	protected ItemRegistryBuilder<T,R> addDatagenTasks(Collection<SimpleDatagenTask<?,?>> newTasks) {
-		datagenTasks.addAll(datagenTasks);
+		datagenTasks.addAll(newTasks);
 		return this;
 	}
 	protected ItemRegistryBuilder<T,R> addDatagenTask(SimpleDatagenTask<?,?> newTask) {
