@@ -87,14 +87,20 @@ public class RedSparkLibSimpleDatagenManager {
 		generator.addProvider(evt.includeServer(), blockTagProvider);
 		generator.addProvider(evt.includeServer(), new RedSparkLibItemTagProvider(this, output, evt.getLookupProvider(), blockTagProvider.contentsGetter(), modid, fileHelper));
 		
-		generator.addProvider(evt.includeServer(), new RedSparkLibItemModelProvider(this, output, modid, fileHelper));
 		generator.addProvider(evt.includeServer(), new RedSparkLibBlockStateProvider(this, output, modid, fileHelper));
+		generator.addProvider(evt.includeServer(), new RedSparkLibItemModelProvider(this, output, modid, fileHelper));
 		
 		//? neoforge {
 		/*generator.addProvider(evt.includeServer(), new RedSparkLibLootTableProvider(this, output, evt.getLookupProvider()));
 		*///?} forge {
 		generator.addProvider(evt.includeServer(), new RedSparkLibLootTableProvider(this, output));
 		//?}
+	}
+	public static RedSparkLibSimpleDatagenManager getManager(String modid) {
+		try {
+			return MOD_DATA_MANAGERS.get(modid);
+		} catch (ExecutionException e) { }
+		return null;
 	}
 	public static RedSparkLibSimpleDatagenManager registerDataGenerators(String modid, GatherDataEvent evt) {
 		RedSparkLibSimpleDatagenManager manager = null;
