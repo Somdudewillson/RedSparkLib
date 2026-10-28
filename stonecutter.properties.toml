@@ -7,19 +7,19 @@ mod.description = "A helpful library mod for my mods."
 mod.authors = ["Somdudewillson"]
 mod.contributors = []
 mod.inception_year = "2026"
-mod.license.name = "MIT"
-mod.license.url = "https://opensource.org/licenses/MIT"
+mod.license.name = "LGPL-3.0"
+mod.license.url = "https://opensource.org/license/lgpl-3-0"
 mod.license.dist = "repo"
-mod.sources_url = "https://github.com/rotgruengelb/stonecutter-mod-template"
-mod.homepage_url = "https://github.com/rotgruengelb/stonecutter-mod-template"
-mod.issues_url = "https://github.com/rotgruengelb/stonecutter-mod-template/issues"
+mod.sources_url = "https://github.com/Somdudewillson/RedSparkLib"
+mod.homepage_url = "https://github.com/Somdudewillson/RedSparkLib"
+mod.issues_url = "https://github.com/Somdudewillson/RedSparkLib/issues"
 mod.discord_url = ""
 mod.environment = "client_and_server"
 
 [[mod.pom.developers]]
 id = "somdudewillson"
 name = "Somdudewillson"
-url = "https://github.com/ghost"
+url = "https://github.com/Somdudewillson"
 
 [forge]
 
